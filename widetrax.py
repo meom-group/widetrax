@@ -57,7 +57,8 @@ def extract_xarray_in_region(directory, area):
 
     return datasets
 
-## 
+####
+
 def count_observations(datasets, area, resolution):
     """
     Input:
@@ -101,6 +102,8 @@ def count_observations(datasets, area, resolution):
     del(one_dtset)
     
     return obs_count
+
+####
 
 def fill_nan(datasets):
    
@@ -148,6 +151,9 @@ def fill_nan(datasets):
         
     return has_converged, filled_datasets
 
+####
+
+
 # to be included in the function retrive_segments
 for key in range(len(filled_datasets)):
     filled_datasets[key]['ssh'] = filled_datasets[key]['ssha'] + filled_datasets[key]['mdt']
@@ -184,6 +190,8 @@ def retrieve_segments(datasets):
                 counter += 1
                 
     return segments_dict
+
+####
 
 def calculate_psd(segments_dict):
     """
