@@ -1,21 +1,8 @@
 #Imports
 
-#check if used or not !!
-import os
-import xarray as xr
 import numpy as np
 import scipy.signal as signal
-import re
-from datetime import datetime
-from collections import defaultdict
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import cartopy.feature as cfeature
-from matplotlib.colors import ListedColormap #check if used or not !!
-from datetime import datetime, timedelta
-
-
-
 
 
 # =============================================================================
@@ -25,30 +12,45 @@ from datetime import datetime, timedelta
     
 def retrieve_segments(datasets,FileType):
     """
-    Input:
-    - datasets (dict): Dictionary containing xarray.Datasets.
+    Extracts segments from xarray.datasets
+    
+    Parameters
+    ----------
+    datasets : Dict
+        Dictionary containing xarray.Datasets
+    FileType : str
+        The file type used to calculate datasets, "NetCDF" or "Zarr"
 
-    Output:
-    - dict: New dictionary containing numpy.arrays.
+    Returns
+    -------
+    segments_dict : Dict
+        Dictionary containing segments (numpy.arrays).
+    
+
     """
     segments_dict = {}
     counter = 0
     
-    #Calcul de SSH = ssha + mdt
+    #Calculation of Sea Surface Height (SSH) : SSH = SSHA + MDT
     for ky in range(len(datasets)):
         datasets[ky]['ssh'] = datasets[ky]['ssha'] + datasets[ky]['mdt']
     
     for key, dataset in datasets.items():
+        print(f"starting processing dict number {key} among {len(datasets)}")
         for col in range(dataset.dims['num_pixels']):
             # Extract data for one column
             col_data = dataset.isel(num_pixels=col)
             
             # Delete coords to avoid duplicates and variables we don't need
-            if FileType == "NetCDF" :
+            if FileType == "NetCDF":
                 col_dataset = col_data.drop_vars(['latitude', 'longitude','ssha', 'mdt'])
-            else :
+                
+            elif FileType == "Zarr":
                 col_dataset = col_data.drop_vars(['latitude', 'longitude','ssha', 'mdt',
                                                   'cycle_number','duacs_land_sea_mask','pass_number'])
+            else:
+                print("The specified format is not supported")
+            
             
             # Check whether the column is entirely NaN
             if not np.all(np.isnan(col_dataset['ssh'])):
@@ -63,7 +65,7 @@ def retrieve_segments(datasets,FileType):
                 while len(segment_data) > 0 and np.isnan(segment_data[-1]):
                     segment_data = segment_data[:-1]
                 
-                #pour vérifier s'il reste pas des nan correspondants aux iles ou continent apres l'interpolation
+                # Verify if any NaN values remain for islands or continents after interpolation
                 if not np.isnan(segment_data).any():
                     segments_dict[counter] = segment_data
                     counter += 1
@@ -78,12 +80,22 @@ def retrieve_segments(datasets,FileType):
 
 def calculate_psd(segments_dict):
     """
-
-    Input:
-    segments_dict (dict): 
-
-    Output:
-    Two dictionaries containing PSDs and associated frequencies.
+    Computes the power spectral density (PSD)
+    
+    Parameters
+    ----------
+    segments_dict : Dict
+        Dictionary containing segments (numpy.arrays)
+    
+    
+    Returns
+    -------
+    
+    psd_dict : Dict
+        Dictionary containing PSDs for each segment
+    freqs_dict : Dict
+        Dictionary containing the associated frequencies
+    
     
     """
     psd_dict = {}
@@ -107,6 +119,28 @@ def calculate_psd(segments_dict):
  
     
 def psd_mean_and_freq(psd_dict, freqs_dict):
+    """
+    Calculate the mean of the Power Spectral Densities (PSD) for each frequency point using the values from a PSD dictionary.
+
+    Parameters
+    ----------
+    psd_dict : Dict
+        A dictionary of numpy arrays containing the Power Spectral Densities (PSD) for segments. The arrays can be of different lengths.
+    
+    freqs_dict : Dict
+        A dictionary containing the corresponding frequencies for each segment (numpy array)
+
+    Returns
+    -------
+    psd_mean : np.ndarray
+        A numpy array containing the mean of the Power Spectral Densities (PSD) for each frequency point. The length of this array is equal to the maximum length of the arrays in psd_dict.
+    
+    freqs_mean : np.ndarray 
+        A numpy array containing frequency values of the longest column in freqs_dict
+    
+    """
+    
+    
     max_length = max(len(array) for array in psd_dict.values())
 
     # Initialize 2 arrays.
@@ -136,6 +170,7 @@ def psd_mean_and_freq(psd_dict, freqs_dict):
     return psd_mean, freqs_mean        
 
 
+
 # =============================================================================
 # plot_psd
 # ============================================================================= 
@@ -143,7 +178,40 @@ def psd_mean_and_freq(psd_dict, freqs_dict):
 
 def plot_psd(ax,freqs, psd1,psd2=None,title=None,psd1_label=None,psd2_label=None):
     """
+    Plots the Power Spectral Density (PSD) on a logarithmic scale.
     
+    The function plots the PSD on the given axes, `ax`. The plot is on a logarithmic scale 
+    for both x and y axes. The function can handle one or two PSD arrays. If provided, 
+    it adds labels and a title to the plot. It also includes reference lines for $k^{-2}$ 
+    and $k^{-5}$ slopes.
+
+    The function adds grid lines, legends, and adjusts axis labels and ticks for better readability.
+
+    If `freqs` or `psd1` are empty, the function prints an error message and returns 
+    without plotting.
+    
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The axes on which to plot the PSD. 
+    freqs : np.ndarray
+        A numpy array containing frequency values.
+    psd1 : np.ndarray
+        A numpy array of PSD values corresponding to `freqs`for the first PSD array.
+    psd2 : np.ndarray, optional
+        Array of PSD values corresponding to `freqs` for the second PSD array, used for comparison.
+    title : str, optional
+        Title of the plot.
+    psd1_label : str, optional
+        Label for the first PSD array. Default is "psd1".
+    psd2_label : str, optional
+        Label for the second PSD array. Default is "psd2".
+    
+
+    Returns
+    -------
+    - None
+
     """
    
     if len(freqs) == 0 or len(psd1) == 0 :

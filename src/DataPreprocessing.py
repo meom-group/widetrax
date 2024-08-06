@@ -5,23 +5,15 @@ import xarray as xr
 import numpy as np
 import pyinterp
 import pyinterp.fill as fill
-
-
 import re
 from datetime import datetime
-
 import zarr
-
 from collections import defaultdict
-
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
-
 from matplotlib.colors import ListedColormap
-
 from datetime import datetime, timedelta
-
 
 
 # =============================================================================
@@ -30,19 +22,30 @@ from datetime import datetime, timedelta
 
 
 def extract_xarray_in_region(directory, area):
+    
     """
-    Input:
-    directory (str): Path to directory containing NetCDF files.
-    area (list): List with boundaries of region of interest [longitude_min, latitude_min, longitude_max, latitude_max].
+    Extracts xarray datasets from SWOT NetCDF data for a specific region
     
 
-    Output:
-    dict: Dictionary containing the xarray.Dataset for the region.
-    """
-    lon_min, lat_min, lon_max, lat_max = area
+    Parameters
+    ----------
+    directory : str
+        Path to the directory containing the NetCDF files
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]
     
+
+    Returns
+    -------
+    datasets : Dict
+        Dictionary containing the xarray.Datasets for the region
+   
+    """
+    
+    lon_min, lat_min, lon_max, lat_max = area    
     datasets = {} 
     i = 0 
+    
     variables_to_load = ["ssha", "mdt", "latitude", "longitude"]
     files_in_dir = os.listdir(directory)
 
@@ -91,7 +94,6 @@ def extract_xarray_in_region(directory, area):
     return datasets
 
 
-
 # =============================================================================
 # count_observations
 # =============================================================================
@@ -99,19 +101,29 @@ def extract_xarray_in_region(directory, area):
 
 def count_observations(datasets, area, resolution):
     """
-    Input:
-    datasets (dict): Dictionary containing xarray.Dataset 
-    area (list): List with region of interest limits [longitude_min, latitude_min, longitude_max, latitude_max].
-    resolution (float): Grid resolution.
+    Calculates the number of available observations per bin in the region of interest.
+    
+    
+    Parameters
+    ----------
+    datasets : Dict
+        Dictionary containing xarray.Datasets
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]
+    resolution : float
+        Grid resolution
 
-    Output:
-    np.ndarray: Array containing the number of observations per pixel.
+    Returns
+    -------
+    obs_count : np.ndarray
+        Array containing the number of observations per pixel
+    
     """
     lon_min,lat_min,lon_max,lat_max = area
     
 
     #Define the grid
-    if lon_min > lon_max : # if for ex lon_min est 2W=358 et lon max 5E=5 
+    if lon_min > lon_max : # if for example lon_min est 2W=358 et lon max 5E=5 
         lon_grid = np.concatenate([np.arange(lon_min, 360, resolution),
                                   np.arange(0, lon_max, resolution)])
     else :
@@ -163,12 +175,19 @@ def fill_nan(datasets):
     """
     Fills in missing values (NaN) in each xarray.Dataset using Gauss-Seidel method.
 
-    Inputs:
-        datasets (Dict): Dictionary containing xarray.Dataset 
+    Parameters
+    ----------
+    datasets : Dict
+        Dictionary containing xarray.Datasets
+    
 
-    Outputs:
-        has_converged (bool): Indicates whether the method has converged
-        filled_dataset (Dict): Dictionary containing xarray.Dataset (with missing values filled in)
+    Returns
+    -------
+    has_converged : bool
+        Indicates whether the method has converged, returns True if the method has converged, otherwise returns False
+    filled_dataset : Dict
+        Dictionary containing xarray.Datasets (with missing values filled in)
+
     """
 
     filled_datasets = {}
@@ -183,7 +202,7 @@ def fill_nan(datasets):
         
         if longitudes.size > 0 and latitudes.size > 0:
         
-            # Replace all values in columns 33 and 34 with NaN (the two columns in the middle)
+            # Replace all values in columns 33 and 34 with NaN (the two middle columns)
             if ssha_values.shape[1]>=34:
                 ssha_values[:, 33:35] = np.nan
 
@@ -218,7 +237,31 @@ def fill_nan(datasets):
 
 
 def check_directory(database_path, start_date_str, end_date_str):
-    # Regex pattern to match folder names like cyc_001, cyc_002, etc.
+    """
+    Scans the folders in the `database_path` directory, identifies the folders 
+    containing NetCDF files whose dates are between `start_date_str` and `end_date_str`, 
+    and returns a list of these folder names.
+
+    
+    Parameters
+    ----------
+    database_path : str
+        Path to the `database` directory
+    start_date_str : str
+        Start date in 'YYYYMMDD' format
+    end_date_str : str
+        End date in 'YYYYMMDD' format
+    
+    Returns
+    -------
+    
+    matching_folders : list
+        List of folder names containing NetCDF files within the specified date range
+        If an error occurs, an error message is printed and an empty list is returned.
+        
+    """
+        
+    # Regex pattern to match folder names like cycle_001, cycle_002, etc.
     folder_pattern = re.compile(r'cycle_\d{3}')
     # Regex pattern to match the date in the file name SWOT........_YYYYMMDD...
     file_pattern = re.compile(r'SWOT.*_(\d{8})T.*\.nc')
@@ -263,6 +306,31 @@ def check_directory(database_path, start_date_str, end_date_str):
 
 
 def extract_xarrays_by_time(database_path, start_date_str, end_date_str,area):
+    """
+    Processes folders in the `database_path` directory, applies the `extract_xarray_in_region` 
+    function to each folder that contains NetCDF files within the date range specified 
+    by `start_date_str` and `end_date_str`, and combines the results into a single dictionary.
+
+
+    Parameters
+    ----------
+    database_path : str
+        Path to the `database` directory
+    start_date_str : str
+        Start date in 'YYYYMMDD' format
+    end_date_str : str
+        End date in 'YYYYMMDD' format
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]
+        
+        
+    Returns
+    -------
+    
+    combined_datasets_dict : Dict
+        A dictionary of xarray.Datasets combining the results from `extract_xarray_in_region` function for each folder.
+        
+    """
     
     matching_folders = check_directory(database_path, start_date_str, end_date_str)
     combined_datasets_dict = defaultdict(list)
@@ -291,12 +359,23 @@ def extract_xarrays_by_time(database_path, start_date_str, end_date_str,area):
 
 def plot_obs_count(ax, obs_count, area,title=None):
     """
-    Plots the observation count per bin.
-
-    Parameters:
-    - ax: Matplotlib Axes instance
-    - obs_count: 2D array of observation counts
-    - area: list
+    Plots the number of observations on a geographical map
+    
+    Parameters
+    ----------
+    ax : matplotlib.axes._subplots.AxesSubplot
+        The matplotlib axes to plot on. 
+    obs_count : numpy.ndarray
+        A 2D array containing the count of observations in each geographical bin.      
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]     
+    title : str, optional
+        The title of the plot. Defaults to None.
+    
+    Returns
+    -------
+    None
+        
     """
     lon_min,lat_min,lon_max,lat_max = area
     
@@ -328,7 +407,6 @@ def plot_obs_count(ax, obs_count, area,title=None):
     if title:
         ax.set_title(title, fontsize=15, fontweight='bold', color='black')
         
-        
 
 # =============================================================================
 # read_zarr_to_xarray_dict
@@ -339,19 +417,28 @@ def plot_obs_count(ax, obs_count, area,title=None):
 def read_zarr_to_xarray_dict(base_directory, area,start_date_str, end_date_str,variables_to_keep):
     
     """
-    Entrées :
-    - base_directory : str
-        Chemin vers le répertoire de base contenant les données Zarr organisées par mois et par jour.
-    - start_date_str : str
-        Date de début au format 'YYYYMMDD'.
-    - end_date_str : str
-        Date de fin au format 'YYYYMMDD'.
-    - variables_to_keep : list of str
-        Liste des variables à conserver dans chaque xarray.Dataset.
-        
-    Sorties :
-    - datasets_dict : dict
-        Dictionnaire contenant les xarray.Dataset résultants, indexés par des entiers uniques.   
+    Reads Zarr files from a directory structure organized by month and day, converts them into a dictionnary of xarray.Dataset objects, retains only specified variables, and extracts a specific geographical region based on latitude and longitude limits.
+
+    Parameters:
+    ----------
+    base_directory : str
+        The path to the base directory containing Zarr data organized by month and day.
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]
+    start_date_str : str
+        The desired start date in the format 'YYYYMMDD'.
+    
+    end_date_str : str
+        The desired end date in the format 'YYYYMMDD'.
+    
+    variables_to_keep : list of str
+        A list of variable names to retain in each xarray.Dataset.
+    
+    Returns:
+    -------
+    datasets_dict : Dict
+        A dictionary containing the resulting xarray.Dataset objects, indexed by unique integers.
+
     """
     
     lon_min = area[0]
@@ -435,13 +522,40 @@ def read_zarr_to_xarray_dict(base_directory, area,start_date_str, end_date_str,v
     return datasets_dict     
 
 
+
 # =============================================================================
 # split_dsets_based_cnum
 # =============================================================================  
 
 
-
 def split_dsets_based_cnum(datasets_dict):
+    """
+    Splits xarray.dataset objects based on unique cycle and pass numbers.
+
+    The function takes a dictionary of xarray.dataset objects and splits each dataset into 
+    smaller datasets based on unique values of 'cycle_number' and 'pass_number'. 
+    The resulting datasets are stored in a new dictionary with sequential keys.
+    
+    Conditions:
+    - A dataset is split if it contains at least 2 different 'cycle_number' values.
+    - For each unique 'cycle_number', the dataset is further split if it contains 
+      at least 2 different 'pass_number' values.
+      
+    If an xarray.dataset in the input dictionary meets the splitting conditions (having at least 2 different 'cycle_number' and 'pass_number'), it is split into smaller xarray datasets. Otherwise, the original dataset is included as is.
+
+    Parameters:
+    ----------
+    datasets_dict : Dict
+        A dictionary where each key corresponds to an xarray Dataset.
+        Each xarray Dataset is expected to have 'cycle_number' and 'pass_number' attributes.
+
+    Returns:
+    -------
+    splited_dict : Dict
+        A new dictionary containing the split xarray.dataset objects.
+    
+    """
+    
     
     splited_dict = {}
     index = 0
@@ -477,4 +591,9 @@ def split_dsets_based_cnum(datasets_dict):
             index += 1
     
     return splited_dict
+
+
+
+
+
 
