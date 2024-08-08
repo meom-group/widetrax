@@ -357,7 +357,7 @@ def extract_xarrays_by_time(database_path, start_date_str, end_date_str,area):
 # =============================================================================
 
 
-def plot_obs_count(ax, obs_count, area,title=None):
+def plot_obs_count(ax, obs_count, area,title=None,save_fig=None):
     """
     Plots the number of observations on a geographical map
     
@@ -371,6 +371,10 @@ def plot_obs_count(ax, obs_count, area,title=None):
         List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]     
     title : str, optional
         The title of the plot. Defaults to None.
+    save_fig: Optional[str], default None
+        Name of the file to save the plot to.
+        Does not save if None.
+
     
     Returns
     -------
@@ -406,6 +410,12 @@ def plot_obs_count(ax, obs_count, area,title=None):
     # Set the title if provided
     if title:
         ax.set_title(title, fontsize=15, fontweight='bold', color='black')
+    
+    # Optionally save the figure
+    if save_fig is not None:
+        plt.savefig(save_fig)
+         
+        
         
 
 # =============================================================================
