@@ -357,7 +357,7 @@ def extract_xarrays_by_time(database_path, start_date_str, end_date_str,area):
 # =============================================================================
 
 
-def plot_obs_count(ax, obs_count, area,title=None,save_fig=None):
+def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, save_fig=None):
     """
     Plots the number of observations on a geographical map
     
@@ -389,28 +389,47 @@ def plot_obs_count(ax, obs_count, area,title=None,save_fig=None):
     if lon_max > 180:
         lon_max = lon_max - 360
         
-        
-    ax.add_feature(cfeature.LAND, facecolor='gray')
+    # Créer des sous-graphes côte à côte
+    if obs_count2 is not None:
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7), subplot_kw={'projection': ccrs.PlateCarree()})
+        maxobs = max(obs_count.max(), obs_count2.max())
+    else:
+        fig, ax1 = plt.subplots(1, 1, figsize=(8, 7), subplot_kw={'projection': ccrs.PlateCarree()})
+        maxobs = obs_count.max()
     
-    ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     
+    ax1.add_feature(cfeature.LAND, facecolor='gray')
+    ax1.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     # Create a mask for zero values to present the continent in its color
     obs_count_masked = np.ma.masked_where(obs_count == 0, obs_count)
     
-    im = ax.imshow(obs_count_masked, extent=[lon_min, lon_max, lat_min, lat_max], 
+    im1 = ax1.imshow(obs_count_masked, extent=[lon_min, lon_max, lat_min, lat_max], 
                    origin='lower', cmap="jet", transform=ccrs.PlateCarree(), 
-                   vmin=0, vmax=obs_count.max())
+                   vmin=0, vmax=maxobs)
     
-    
-    ax.coastlines()
-    ax.gridlines(draw_labels=True)
-    
-    plt.colorbar(im, ax=ax, label='Number of observations per bin',shrink=0.5)
-    
-    # Set the title if provided
+    ax1.coastlines()
+    ax1.gridlines(draw_labels=True)
+    plt.colorbar(im1, ax=ax1, label='Number of observations per bin',shrink=0.8)
     if title:
-        ax.set_title(title, fontsize=15, fontweight='bold', color='black')
+        ax1.set_title(title, fontsize=15, fontweight='bold', color='black')
+
+    if obs_count2 is not None :    
+        ax2.add_feature(cfeature.LAND, facecolor='gray')
+        ax2.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+        # Create a mask for zero values to present the continent in its color
+        obs_count_masked2 = np.ma.masked_where(obs_count2 == 0, obs_count2)
+
+        im2 = ax2.imshow(obs_count_masked2, extent=[lon_min, lon_max, lat_min, lat_max], 
+                       origin='lower', cmap="jet", transform=ccrs.PlateCarree(), 
+                       vmin=0, vmax=maxobs)
+
+        ax2.coastlines()
+        ax2.gridlines(draw_labels=True)
+        plt.colorbar(im2, ax=ax2, label='Number of observations per bin',shrink=0.8)
+        if title2:
+            ax2.set_title(title2, fontsize=15, fontweight='bold', color='black')
     
+
     # Optionally save the figure
     if save_fig is not None:
         plt.savefig(save_fig)
