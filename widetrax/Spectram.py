@@ -5,6 +5,9 @@ import scipy.signal as signal
 import matplotlib.pyplot as plt
 
 
+
+
+
 # =============================================================================
 # retrieve_segments
 # =============================================================================
@@ -101,7 +104,10 @@ def calculate_psd(segments_dict):
     psd_dict = {}
     freqs_dict = {}
     new_key = 0
-    fs = 3.25 #sampling frequency = sat speed/distance between each two values(6.5/2)
+    #fs = 3.25 #sampling frequency = sat speed/distance between each two values(6.5/2)
+    fs = 0.5
+    #fs = 0.0005
+    #fs = (2 * math.pi)/2000
 
     for key, segment_data in segments_dict.items():
         if len(segment_data) > 199:  # Check segment length

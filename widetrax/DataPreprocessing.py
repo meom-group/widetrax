@@ -1,6 +1,7 @@
 #Imports
 
 import os
+import sys
 import xarray as xr
 import numpy as np
 import pyinterp
@@ -363,14 +364,16 @@ def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, sa
     
     Parameters
     ----------
-    ax : matplotlib.axes._subplots.AxesSubplot
-        The matplotlib axes to plot on. 
     obs_count : numpy.ndarray
-        A 2D array containing the count of observations in each geographical bin.      
+        A 2D array containing the count of observations in each geographical bin.  
+    obs_count2 : numpy.ndarray, optional
+        A second 2D array containing the count of observations in each geographical bin. 
     area : list
         List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]     
     title : str, optional
         The title of the plot. Defaults to None.
+    title2 : str, optional
+        The title of the 2nd plot. Defaults to None.    
     save_fig: Optional[str], default None
         Name of the file to save the plot to.
         Does not save if None.
@@ -391,7 +394,7 @@ def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, sa
         
     # Créer des sous-graphes côte à côte
     if obs_count2 is not None:
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7), subplot_kw={'projection': ccrs.PlateCarree()})
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 12), subplot_kw={'projection': ccrs.PlateCarree()})
         maxobs = max(obs_count.max(), obs_count2.max())
     else:
         fig, ax1 = plt.subplots(1, 1, figsize=(8, 7), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -408,8 +411,11 @@ def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, sa
                    vmin=0, vmax=maxobs)
     
     ax1.coastlines()
-    ax1.gridlines(draw_labels=True)
-    plt.colorbar(im1, ax=ax1, label='Number of observations per bin',shrink=0.8)
+    gl1 = ax1.gridlines(draw_labels=True)
+    gl1.right_labels = False  
+    gl1.top_labels = False    
+    
+    plt.colorbar(im1, ax=ax1, label='Number of observations per bin',shrink=0.7)
     if title:
         ax1.set_title(title, fontsize=15, fontweight='bold', color='black')
 
@@ -424,8 +430,10 @@ def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, sa
                        vmin=0, vmax=maxobs)
 
         ax2.coastlines()
-        ax2.gridlines(draw_labels=True)
-        plt.colorbar(im2, ax=ax2, label='Number of observations per bin',shrink=0.8)
+        gl2 = ax2.gridlines(draw_labels=True)
+        gl2.right_labels = False  
+        gl2.top_labels = False 
+        plt.colorbar(im2, ax=ax2, label='Number of observations per bin',shrink=0.7)
         if title2:
             ax2.set_title(title2, fontsize=15, fontweight='bold', color='black')
     
@@ -621,8 +629,28 @@ def split_dsets_based_cnum(datasets_dict):
     
     return splited_dict
 
+# =============================================================================
+# remove_duplicates_from_sys_path
+# ============================================================================= 
 
+def remove_duplicates_from_sys_path():
+    """
+    Removes duplicates from the sys.path list while preserving the order of elements.
 
+    Iterates through the sys.path list and constructs a new list without duplicates. 
+    Updates sys.path with this new list.
+
+    Returns:
+        None
+        
+    """
+    seen = set()
+    new_sys_path = []
+    for path in sys.path:
+        if path not in seen:
+            new_sys_path.append(path)
+            seen.add(path)
+    sys.path = new_sys_path
 
 
 
