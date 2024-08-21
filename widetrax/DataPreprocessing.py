@@ -415,9 +415,13 @@ def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, sa
     gl1.right_labels = False  
     gl1.top_labels = False    
     
-    plt.colorbar(im1, ax=ax1, label='Number of observations per bin',shrink=0.7)
+    plt.colorbar(im1, ax=ax1, label='Number of observations per bin',shrink=0.5)
+    
     if title:
-        ax1.set_title(title, fontsize=15, fontweight='bold', color='black')
+        if len(title) >= 40 :
+            ax1.set_title(title, fontsize=11, fontweight='bold', color='black')
+        else :
+            ax1.set_title(title, fontsize=15, fontweight='bold', color='black')
 
     if obs_count2 is not None :    
         ax2.add_feature(cfeature.LAND, facecolor='gray')
