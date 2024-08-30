@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>widetrax package &mdash; widetrax 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            widetrax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">widetrax package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-widetrax.DataPreprocessing">widetrax.DataPreprocessing module</a><ul>
+<li><a class="reference internal" href="#widetrax.DataPreprocessing.check_directory"><code class="docutils literal notranslate"><span class="pre">check_directory()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.DataPreprocessing.count_observations"><code class="docutils literal notranslate"><span class="pre">count_observations()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.DataPreprocessing.extract_xarray_in_region"><code class="docutils literal notranslate"><span class="pre">extract_xarray_in_region()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.DataPreprocessing.extract_xarrays_by_time"><code class="docutils literal notranslate"><span class="pre">extract_xarrays_by_time()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.DataPreprocessing.fill_nan"><code class="docutils literal notranslate"><span class="pre">fill_nan()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.DataPreprocessing.plot_obs_count"><code class="docutils literal notranslate"><span class="pre">plot_obs_count()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.DataPreprocessing.read_zarr_to_xarray_dict"><code class="docutils literal notranslate"><span class="pre">read_zarr_to_xarray_dict()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.DataPreprocessing.remove_duplicates_from_sys_path"><code class="docutils literal notranslate"><span class="pre">remove_duplicates_from_sys_path()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.DataPreprocessing.split_dsets_based_cnum"><code class="docutils literal notranslate"><span class="pre">split_dsets_based_cnum()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-widetrax.Spectram">widetrax.Spectram module</a><ul>
+<li><a class="reference internal" href="#widetrax.Spectram.calculate_psd"><code class="docutils literal notranslate"><span class="pre">calculate_psd()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.Spectram.plot_psd"><code class="docutils literal notranslate"><span class="pre">plot_psd()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.Spectram.psd_mean_and_freq"><code class="docutils literal notranslate"><span class="pre">psd_mean_and_freq()</span></code></a></li>
+<li><a class="reference internal" href="#widetrax.Spectram.retrieve_segments"><code class="docutils literal notranslate"><span class="pre">retrieve_segments()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-widetrax.version">widetrax.version module</a></li>
+<li><a class="reference internal" href="#module-widetrax">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">widetrax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">widetrax package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/widetrax.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="widetrax-package">
+<h1>widetrax package<a class="headerlink" href="#widetrax-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-widetrax.DataPreprocessing">
+<span id="widetrax-datapreprocessing-module"></span><h2>widetrax.DataPreprocessing module<a class="headerlink" href="#module-widetrax.DataPreprocessing" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.DataPreprocessing.check_directory">
+<span class="sig-prename descclassname"><span class="pre">widetrax.DataPreprocessing.</span></span><span class="sig-name descname"><span class="pre">check_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date_str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.DataPreprocessing.check_directory" title="Link to this definition"></a></dt>
+<dd><p>Scans the folders in the <cite>database_path</cite> directory, identifies the folders
+containing NetCDF files whose dates are between <cite>start_date_str</cite> and <cite>end_date_str</cite>,
+and returns a list of these folder names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database_path</strong> (<em>str</em>) – Path to the <cite>database</cite> directory</p></li>
+<li><p><strong>start_date_str</strong> (<em>str</em>) – Start date in ‘YYYYMMDD’ format</p></li>
+<li><p><strong>end_date_str</strong> (<em>str</em>) – End date in ‘YYYYMMDD’ format</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>matching_folders</strong> – List of folder names containing NetCDF files within the specified date range
+If an error occurs, an error message is printed and an empty list is returned.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.DataPreprocessing.count_observations">
+<span class="sig-prename descclassname"><span class="pre">widetrax.DataPreprocessing.</span></span><span class="sig-name descname"><span class="pre">count_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.DataPreprocessing.count_observations" title="Link to this definition"></a></dt>
+<dd><p>Calculates the number of available observations per bin in the region of interest.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datasets</strong> (<em>Dict</em>) – Dictionary containing xarray.Datasets</p></li>
+<li><p><strong>area</strong> (<em>list</em>) – List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]</p></li>
+<li><p><strong>resolution</strong> (<em>float</em>) – Grid resolution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>obs_count</strong> – Array containing the number of observations per pixel</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.DataPreprocessing.extract_xarray_in_region">
+<span class="sig-prename descclassname"><span class="pre">widetrax.DataPreprocessing.</span></span><span class="sig-name descname"><span class="pre">extract_xarray_in_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.DataPreprocessing.extract_xarray_in_region" title="Link to this definition"></a></dt>
+<dd><p>Extracts xarray datasets from SWOT NetCDF data for a specific region</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) – Path to the directory containing the NetCDF files</p></li>
+<li><p><strong>area</strong> (<em>list</em>) – List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>datasets</strong> – Dictionary containing the xarray.Datasets for the region</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.DataPreprocessing.extract_xarrays_by_time">
+<span class="sig-prename descclassname"><span class="pre">widetrax.DataPreprocessing.</span></span><span class="sig-name descname"><span class="pre">extract_xarrays_by_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.DataPreprocessing.extract_xarrays_by_time" title="Link to this definition"></a></dt>
+<dd><p>Processes folders in the <cite>database_path</cite> directory, applies the <cite>extract_xarray_in_region</cite>
+function to each folder that contains NetCDF files within the date range specified
+by <cite>start_date_str</cite> and <cite>end_date_str</cite>, and combines the results into a single dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database_path</strong> (<em>str</em>) – Path to the <cite>database</cite> directory</p></li>
+<li><p><strong>start_date_str</strong> (<em>str</em>) – Start date in ‘YYYYMMDD’ format</p></li>
+<li><p><strong>end_date_str</strong> (<em>str</em>) – End date in ‘YYYYMMDD’ format</p></li>
+<li><p><strong>area</strong> (<em>list</em>) – List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>combined_datasets_dict</strong> – A dictionary of xarray.Datasets combining the results from <cite>extract_xarray_in_region</cite> function for each folder.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.DataPreprocessing.fill_nan">
+<span class="sig-prename descclassname"><span class="pre">widetrax.DataPreprocessing.</span></span><span class="sig-name descname"><span class="pre">fill_nan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.DataPreprocessing.fill_nan" title="Link to this definition"></a></dt>
+<dd><p>Fills in missing values (NaN) in each xarray.Dataset using Gauss-Seidel method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datasets</strong> (<em>Dict</em>) – Dictionary containing xarray.Datasets</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>has_converged</strong> (<em>bool</em>) – Indicates whether the method has converged, returns True if the method has converged, otherwise returns False</p></li>
+<li><p><strong>filled_dataset</strong> (<em>Dict</em>) – Dictionary containing xarray.Datasets (with missing values filled in)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.DataPreprocessing.plot_obs_count">
+<span class="sig-prename descclassname"><span class="pre">widetrax.DataPreprocessing.</span></span><span class="sig-name descname"><span class="pre">plot_obs_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_count2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.DataPreprocessing.plot_obs_count" title="Link to this definition"></a></dt>
+<dd><p>Plots the number of observations on a geographical map</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_count</strong> (<em>numpy.ndarray</em>) – A 2D array containing the count of observations in each geographical bin.</p></li>
+<li><p><strong>obs_count2</strong> (<em>numpy.ndarray</em><em>, </em><em>optional</em>) – A second 2D array containing the count of observations in each geographical bin.</p></li>
+<li><p><strong>area</strong> (<em>list</em>) – List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – The title of the plot. Defaults to None.</p></li>
+<li><p><strong>title2</strong> (<em>str</em><em>, </em><em>optional</em>) – The title of the 2nd plot. Defaults to None.</p></li>
+<li><p><strong>save_fig</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>default None</em>) – Name of the file to save the plot to.
+Does not save if None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.DataPreprocessing.read_zarr_to_xarray_dict">
+<span class="sig-prename descclassname"><span class="pre">widetrax.DataPreprocessing.</span></span><span class="sig-name descname"><span class="pre">read_zarr_to_xarray_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_keep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.DataPreprocessing.read_zarr_to_xarray_dict" title="Link to this definition"></a></dt>
+<dd><p>Reads Zarr files from a directory structure organized by month and day, converts them into a dictionnary of xarray.Dataset objects, retains only specified variables, and extracts a specific geographical region based on latitude and longitude limits.</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>base_directory<span class="classifier">str</span></dt><dd><p>The path to the base directory containing Zarr data organized by month and day.</p>
+</dd>
+<dt>area<span class="classifier">list</span></dt><dd><p>List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]</p>
+</dd>
+<dt>start_date_str<span class="classifier">str</span></dt><dd><p>The desired start date in the format ‘YYYYMMDD’.</p>
+</dd>
+<dt>end_date_str<span class="classifier">str</span></dt><dd><p>The desired end date in the format ‘YYYYMMDD’.</p>
+</dd>
+<dt>variables_to_keep<span class="classifier">list of str</span></dt><dd><p>A list of variable names to retain in each xarray.Dataset.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>datasets_dict<span class="classifier">Dict</span></dt><dd><p>A dictionary containing the resulting xarray.Dataset objects, indexed by unique integers.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.DataPreprocessing.remove_duplicates_from_sys_path">
+<span class="sig-prename descclassname"><span class="pre">widetrax.DataPreprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_duplicates_from_sys_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.DataPreprocessing.remove_duplicates_from_sys_path" title="Link to this definition"></a></dt>
+<dd><p>Removes duplicates from the sys.path list while preserving the order of elements.</p>
+<p>Iterates through the sys.path list and constructs a new list without duplicates.
+Updates sys.path with this new list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.DataPreprocessing.split_dsets_based_cnum">
+<span class="sig-prename descclassname"><span class="pre">widetrax.DataPreprocessing.</span></span><span class="sig-name descname"><span class="pre">split_dsets_based_cnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.DataPreprocessing.split_dsets_based_cnum" title="Link to this definition"></a></dt>
+<dd><p>Splits xarray.dataset objects based on unique cycle and pass numbers.</p>
+<p>The function takes a dictionary of xarray.dataset objects and splits each dataset into
+smaller datasets based on unique values of ‘cycle_number’ and ‘pass_number’.
+The resulting datasets are stored in a new dictionary with sequential keys.</p>
+<p>Conditions:
+- A dataset is split if it contains at least 2 different ‘cycle_number’ values.
+- For each unique ‘cycle_number’, the dataset is further split if it contains</p>
+<blockquote>
+<div><p>at least 2 different ‘pass_number’ values.</p>
+</div></blockquote>
+<p>If an xarray.dataset in the input dictionary meets the splitting conditions (having at least 2 different ‘cycle_number’ and ‘pass_number’), it is split into smaller xarray datasets. Otherwise, the original dataset is included as is.</p>
+<section id="id1">
+<h3>Parameters:<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>datasets_dict<span class="classifier">Dict</span></dt><dd><p>A dictionary where each key corresponds to an xarray Dataset.
+Each xarray Dataset is expected to have ‘cycle_number’ and ‘pass_number’ attributes.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns:<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>splited_dict<span class="classifier">Dict</span></dt><dd><p>A new dictionary containing the split xarray.dataset objects.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-widetrax.Spectram">
+<span id="widetrax-spectram-module"></span><h2>widetrax.Spectram module<a class="headerlink" href="#module-widetrax.Spectram" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.Spectram.calculate_psd">
+<span class="sig-prename descclassname"><span class="pre">widetrax.Spectram.</span></span><span class="sig-name descname"><span class="pre">calculate_psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segments_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.Spectram.calculate_psd" title="Link to this definition"></a></dt>
+<dd><p>Computes the power spectral density (PSD)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segments_dict</strong> (<em>Dict</em>) – Dictionary containing segments (numpy.arrays)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>psd_dict</strong> (<em>Dict</em>) – Dictionary containing PSDs for each segment</p></li>
+<li><p><strong>freqs_dict</strong> (<em>Dict</em>) – Dictionary containing the associated frequencies</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.Spectram.plot_psd">
+<span class="sig-prename descclassname"><span class="pre">widetrax.Spectram.</span></span><span class="sig-name descname"><span class="pre">plot_psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd1_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd2_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.Spectram.plot_psd" title="Link to this definition"></a></dt>
+<dd><p>Plots the Power Spectral Density (PSD) on a logarithmic scale.</p>
+<p>The function plots the PSD on the given axes, <cite>ax</cite>. The plot is on a logarithmic scale
+for both x and y axes. The function can handle one or two PSD arrays. If provided,
+it adds labels and a title to the plot. It also includes reference lines for $k^{-2}$
+and $k^{-5}$ slopes.</p>
+<p>The function adds grid lines, legends, and adjusts axis labels and ticks for better readability.</p>
+<p>If <cite>freqs</cite> or <cite>psd1</cite> are empty, the function prints an error message and returns
+without plotting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes on which to plot the PSD.</p></li>
+<li><p><strong>freqs</strong> (<em>np.ndarray</em>) – A numpy array containing frequency values.</p></li>
+<li><p><strong>psd1</strong> (<em>np.ndarray</em>) – A numpy array of PSD values corresponding to <a href="#id3"><span class="problematic" id="id4">`</span></a>freqs`for the first PSD array.</p></li>
+<li><p><strong>psd2</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of PSD values corresponding to <cite>freqs</cite> for the second PSD array, used for comparison.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Title of the plot.</p></li>
+<li><p><strong>psd1_label</strong> (<em>str</em><em>, </em><em>optional</em>) – Label for the first PSD array. Default is “psd1”.</p></li>
+<li><p><strong>psd2_label</strong> (<em>str</em><em>, </em><em>optional</em>) – Label for the second PSD array. Default is “psd2”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>None</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.Spectram.psd_mean_and_freq">
+<span class="sig-prename descclassname"><span class="pre">widetrax.Spectram.</span></span><span class="sig-name descname"><span class="pre">psd_mean_and_freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psd_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.Spectram.psd_mean_and_freq" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mean of the Power Spectral Densities (PSD) for each frequency point using the values from a PSD dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>psd_dict</strong> (<em>Dict</em>) – A dictionary of numpy arrays containing the Power Spectral Densities (PSD) for segments. The arrays can be of different lengths.</p></li>
+<li><p><strong>freqs_dict</strong> (<em>Dict</em>) – A dictionary containing the corresponding frequencies for each segment (numpy array)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>psd_mean</strong> (<em>np.ndarray</em>) – A numpy array containing the mean of the Power Spectral Densities (PSD) for each frequency point. The length of this array is equal to the maximum length of the arrays in psd_dict.</p></li>
+<li><p><strong>freqs_mean</strong> (<em>np.ndarray</em>) – A numpy array containing frequency values of the longest column in freqs_dict</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="widetrax.Spectram.retrieve_segments">
+<span class="sig-prename descclassname"><span class="pre">widetrax.Spectram.</span></span><span class="sig-name descname"><span class="pre">retrieve_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FileType</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#widetrax.Spectram.retrieve_segments" title="Link to this definition"></a></dt>
+<dd><p>Extracts segments from xarray.datasets</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datasets</strong> (<em>Dict</em>) – Dictionary containing xarray.Datasets</p></li>
+<li><p><strong>FileType</strong> (<em>str</em>) – The file type used to calculate datasets, “NetCDF” or “Zarr”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>segments_dict</strong> – Dictionary containing segments (numpy.arrays).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-widetrax.version">
+<span id="widetrax-version-module"></span><h2>widetrax.version module<a class="headerlink" href="#module-widetrax.version" title="Link to this heading"></a></h2>
+</section>
+<section id="module-widetrax">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-widetrax" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Amine Ouhechou, Julien Le Sommer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
