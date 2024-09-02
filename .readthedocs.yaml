@@ -28,5 +28,5 @@ sphinx:
 python:
   install:
     - requirements: docs/requirements.txt
-    - pip: 
-        - sphinx_rtd_theme
+    - method: pip 
+      path: .   
