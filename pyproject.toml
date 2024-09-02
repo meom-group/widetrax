@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "widetrax"
+version = "0.0.1"
+authors = [
+    { name = "Amine Ouhechou", email = "amine.ouhechou@univ-grenoble-alpes.fr" },
+    { name = "Julien Le Sommer", email = "julien.lesommer@univ-grenoble-alpes.fr" },
+]
+
+
+description = "Computes the Power Spectrum density (PSD) from SWOT data"
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["PSD", "SWOT"]
+license = {text = "Apache-2.0"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "netCDF4",
+    "numpy",
+    "xarray"
+]
