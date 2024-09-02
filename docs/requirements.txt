@@ -1,3 +1,2 @@
 sphinx
-myst_parser
-sphinx-rtd-theme
+sphinx_rtd_theme
