@@ -18,5 +18,5 @@ Contents:
    :maxdepth: 2
 
    Overview <overview>
-   widetrax
-   modules
+   api
+
