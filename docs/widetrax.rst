@@ -10,10 +10,3 @@ Submodules
    widetrax.DataPreprocessing
    widetrax.Spectram
 
-Module contents
----------------
-
-.. automodule:: widetrax.DataPreprocessing
-   :members:
-   :undoc-members:
-   :show-inheritance:
