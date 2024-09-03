@@ -8,16 +8,15 @@ It computes the power spectrum density(PSD) of Sea surface Height (SSH) for any 
 
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :caption: Contents:
 
 Contents:
 ---------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    Overview <overview>
-   Examples
    api
 
