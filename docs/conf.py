@@ -2,7 +2,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../../widetrax'))
+sys.path.insert(0, os.path.abspath('../widetrax'))
 #autodoc_member_order = "groupwise"
 
 
