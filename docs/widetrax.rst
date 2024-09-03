@@ -13,7 +13,7 @@ Submodules
 Module contents
 ---------------
 
-.. automodule:: widetrax
+.. automodule:: idetrax.DataPreprocessing
    :members:
    :undoc-members:
    :show-inheritance:
