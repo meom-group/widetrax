@@ -6,7 +6,6 @@ Welcome to widetrax's documentation !
 It computes the power spectrum density(PSD) of Sea surface Height (SSH) for any region of the world, and both phases/orbits of the SWOT mission.
 
 
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -19,4 +18,3 @@ Contents:
 
    Overview <overview>
    api
-

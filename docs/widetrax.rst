@@ -7,10 +7,16 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   jaxparrow.widetrax.DataPreprocessing
+   widetrax.DataPreprocessing
    widetrax.Spectram
 
+Module contents
+---------------
 
+.. automodule:: widetrax
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
    
 

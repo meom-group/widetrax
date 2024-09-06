@@ -1,5 +1,5 @@
 widetrax.Spectram module
-===========================
+========================
 
 .. automodule:: widetrax.Spectram
    :members:
