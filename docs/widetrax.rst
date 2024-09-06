@@ -4,20 +4,22 @@ widetrax package
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+widetrax.DataPreprocessing module
+---------------------------------
 
-   widetrax.DataPreprocessing
-   widetrax.Spectram
-
-Module contents
----------------
-
-.. automodule:: widetrax
+.. automodule:: widetrax.DataPreprocessing
    :members:
    :undoc-members:
    :show-inheritance:
 
-   
+widetrax.Spectram module
+------------------------
+
+.. automodule:: widetrax.Spectram
+   :members:
+   :undoc-members:
+   :show-inheritance:  
+
+
 
 
