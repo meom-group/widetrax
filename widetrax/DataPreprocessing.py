@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 # =============================================================================
 
 
-def extract_xarray_in_region(directory, area):
+def extract_xarray_in_region(directory:str, area:list[int])-> dict[str, xr.Dataset]:
     
     """
     Extracts xarray datasets from SWOT NetCDF data for a specific region
