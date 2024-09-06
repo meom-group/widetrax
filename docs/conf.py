@@ -3,8 +3,9 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath('../widetrax'))
-#autodoc_member_order = "groupwise"
+autodoc_member_order = "groupwise"
 
+from version import __version__
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -26,7 +27,8 @@ extensions = ["sphinx.ext.duration",
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
-    "sphinx.ext.napoleon"]
+    "sphinx.ext.napoleon",
+    "myst_parser"]
 
 templates_path = ['_templates']
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
