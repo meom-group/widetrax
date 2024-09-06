@@ -4,6 +4,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../widetrax'))
 autodoc_member_order = "groupwise"
+exclude_patterns = ["_build", "**tests**"]
 
 from version import __version__
 
