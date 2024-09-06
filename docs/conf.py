@@ -32,6 +32,16 @@ extensions = ["sphinx.ext.duration",
     "sphinx.ext.napoleon",
     "myst_parser"]
 
+autodoc_default_options = {
+    'members': True,
+    'undoc-members': True,
+    'private-members': True,
+    'special-members': True,
+    'inherited-members': True,
+    'show-inheritance': True
+}
+
+
 templates_path = ['_templates']
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
