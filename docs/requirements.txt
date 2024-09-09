@@ -1,3 +1,13 @@
 sphinx
 myst_parser
 sphinx_rtd_theme
+xarray
+numpy
+datetime
+zarr
+re
+pyinterp
+collections
+cartopy
+matplotlib
+scipy
