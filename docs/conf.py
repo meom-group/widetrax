@@ -40,7 +40,7 @@ autodoc_default_options = {
     'inherited-members': True,
     'show-inheritance': True
 }
-
+autosummary_generate = True
 
 templates_path = ['_templates']
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
