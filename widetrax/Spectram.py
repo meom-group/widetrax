@@ -18,14 +18,14 @@ def retrieve_segments(datasets,FileType):
     Extracts segments from xarray.datasets
     
     Parameters
-    ----------
+    ------------
     datasets : Dict
         Dictionary containing xarray.Datasets
     FileType : str
         The file type used to calculate datasets, "NetCDF" or "Zarr"
 
     Returns
-    -------
+    ---------
     segments_dict : Dict
         Dictionary containing segments (numpy.arrays).
     
@@ -86,13 +86,13 @@ def calculate_psd(segments_dict):
     Computes the power spectral density (PSD)
     
     Parameters
-    ----------
+    ------------
     segments_dict : Dict
         Dictionary containing segments (numpy.arrays)
     
     
     Returns
-    -------
+    ---------
     
     psd_dict : Dict
         Dictionary containing PSDs for each segment
@@ -129,7 +129,7 @@ def psd_mean_and_freq(psd_dict, freqs_dict):
     Calculate the mean of the Power Spectral Densities (PSD) for each frequency point using the values from a PSD dictionary.
 
     Parameters
-    ----------
+    ------------
     psd_dict : Dict
         A dictionary of numpy arrays containing the Power Spectral Densities (PSD) for segments. The arrays can be of different lengths.
     
@@ -137,7 +137,7 @@ def psd_mean_and_freq(psd_dict, freqs_dict):
         A dictionary containing the corresponding frequencies for each segment (numpy array)
 
     Returns
-    -------
+    ---------
     psd_mean : np.ndarray
         A numpy array containing the mean of the Power Spectral Densities (PSD) for each frequency point. The length of this array is equal to the maximum length of the arrays in psd_dict.
     
@@ -197,26 +197,26 @@ def plot_psd(ax,freqs, psd1,psd2=None,title=None,psd1_label=None,psd2_label=None
     without plotting.
     
     Parameters
-    ----------
+    ------------
     ax : matplotlib.axes.Axes
         The axes on which to plot the PSD. 
     freqs : np.ndarray
         A numpy array containing frequency values.
     psd1 : np.ndarray
-        A numpy array of PSD values corresponding to `freqs`for the first PSD array.
+        A numpy array of PSD values corresponding to `freqs` for the first PSD array.
     psd2 : np.ndarray, optional
         Array of PSD values corresponding to `freqs` for the second PSD array, used for comparison.
     title : str, optional
         Title of the plot.
     psd1_label : str, optional
-        Label for the first PSD array. Default is "psd1".
+        Label for the first PSD array. Default is `psd1`.
     psd2_label : str, optional
-        Label for the second PSD array. Default is "psd2".
+        Label for the second PSD array. Default is `psd2`.
     
 
     Returns
-    -------
-    - None
+    ---------
+    None
 
     """
    

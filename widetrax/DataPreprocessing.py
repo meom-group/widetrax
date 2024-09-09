@@ -22,14 +22,14 @@ from datetime import datetime, timedelta
 # =============================================================================
 
 
-def extract_xarray_in_region(directory:str, area:list[int])-> dict[str, xr.Dataset]:
+def extract_xarray_in_region(directory, area):
     
     """
     Extracts xarray datasets from SWOT NetCDF data for a specific region
     
 
     Parameters
-    ----------
+    ------------
     directory : str
         Path to the directory containing the NetCDF files
     area : list
@@ -37,7 +37,7 @@ def extract_xarray_in_region(directory:str, area:list[int])-> dict[str, xr.Datas
     
 
     Returns
-    -------
+    ---------
     datasets : Dict
         Dictionary containing the xarray.Datasets for the region
    
@@ -106,7 +106,7 @@ def count_observations(datasets, area, resolution):
     
     
     Parameters
-    ----------
+    ------------
     datasets : Dict
         Dictionary containing xarray.Datasets
     area : list
@@ -115,7 +115,7 @@ def count_observations(datasets, area, resolution):
         Grid resolution
 
     Returns
-    -------
+    ---------
     obs_count : np.ndarray
         Array containing the number of observations per pixel
     
@@ -138,7 +138,7 @@ def count_observations(datasets, area, resolution):
 
     # Iterating on xarrays in datasets dictionnary
     for key in range(len(datasets)):
-        print(f"{key}/{len(datasets)}")
+        #print(f"{key}/{len(datasets)}")
     
         one_dtset = datasets[key].compute() 
         
@@ -177,13 +177,13 @@ def fill_nan(datasets):
     Fills in missing values (NaN) in each xarray.Dataset using Gauss-Seidel method.
 
     Parameters
-    ----------
+    ------------
     datasets : Dict
         Dictionary containing xarray.Datasets
     
 
     Returns
-    -------
+    ---------
     has_converged : bool
         Indicates whether the method has converged, returns True if the method has converged, otherwise returns False
     filled_dataset : Dict
@@ -239,13 +239,14 @@ def fill_nan(datasets):
 
 def check_directory(database_path, start_date_str, end_date_str):
     """
+    
     Scans the folders in the `database_path` directory, identifies the folders 
     containing NetCDF files whose dates are between `start_date_str` and `end_date_str`, 
     and returns a list of these folder names.
 
     
     Parameters
-    ----------
+    ------------
     database_path : str
         Path to the `database` directory
     start_date_str : str
@@ -254,7 +255,7 @@ def check_directory(database_path, start_date_str, end_date_str):
         End date in 'YYYYMMDD' format
     
     Returns
-    -------
+    ---------
     
     matching_folders : list
         List of folder names containing NetCDF files within the specified date range
@@ -314,7 +315,7 @@ def extract_xarrays_by_time(database_path, start_date_str, end_date_str,area):
 
 
     Parameters
-    ----------
+    ------------
     database_path : str
         Path to the `database` directory
     start_date_str : str
@@ -326,7 +327,7 @@ def extract_xarrays_by_time(database_path, start_date_str, end_date_str,area):
         
         
     Returns
-    -------
+    ---------
     
     combined_datasets_dict : Dict
         A dictionary of xarray.Datasets combining the results from `extract_xarray_in_region` function for each folder.
@@ -363,7 +364,7 @@ def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, sa
     Plots the number of observations on a geographical map
     
     Parameters
-    ----------
+    ------------
     obs_count : numpy.ndarray
         A 2D array containing the count of observations in each geographical bin.  
     obs_count2 : numpy.ndarray, optional
@@ -380,7 +381,7 @@ def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, sa
 
     
     Returns
-    -------
+    ---------
     None
         
     """
@@ -437,7 +438,7 @@ def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, sa
         gl2 = ax2.gridlines(draw_labels=True)
         gl2.right_labels = False  
         gl2.top_labels = False 
-        plt.colorbar(im2, ax=ax2, label='Number of observations per bin',shrink=0.7)
+        plt.colorbar(im2, ax=ax2, label='Number of observations per bin',shrink=0.5)
         if title2:
             ax2.set_title(title2, fontsize=15, fontweight='bold', color='black')
     
@@ -458,10 +459,11 @@ def plot_obs_count(obs_count, area, obs_count2=None ,title=None, title2=None, sa
 def read_zarr_to_xarray_dict(base_directory, area,start_date_str, end_date_str,variables_to_keep):
     
     """
+    
     Reads Zarr files from a directory structure organized by month and day, converts them into a dictionnary of xarray.Dataset objects, retains only specified variables, and extracts a specific geographical region based on latitude and longitude limits.
 
-    Parameters:
-    ----------
+    Parameters
+    ------------
     base_directory : str
         The path to the base directory containing Zarr data organized by month and day.
     area : list
@@ -475,8 +477,8 @@ def read_zarr_to_xarray_dict(base_directory, area,start_date_str, end_date_str,v
     variables_to_keep : list of str
         A list of variable names to retain in each xarray.Dataset.
     
-    Returns:
-    -------
+    Returns
+    ---------
     datasets_dict : Dict
         A dictionary containing the resulting xarray.Dataset objects, indexed by unique integers.
 
@@ -584,14 +586,14 @@ def split_dsets_based_cnum(datasets_dict):
       
     If an xarray.dataset in the input dictionary meets the splitting conditions (having at least 2 different 'cycle_number' and 'pass_number'), it is split into smaller xarray datasets. Otherwise, the original dataset is included as is.
 
-    Parameters:
-    ----------
+    Parameters
+    ------------
     datasets_dict : Dict
         A dictionary where each key corresponds to an xarray Dataset.
         Each xarray Dataset is expected to have 'cycle_number' and 'pass_number' attributes.
 
-    Returns:
-    -------
+    Returns
+    ---------
     splited_dict : Dict
         A new dictionary containing the split xarray.dataset objects.
     
@@ -644,7 +646,8 @@ def remove_duplicates_from_sys_path():
     Iterates through the sys.path list and constructs a new list without duplicates. 
     Updates sys.path with this new list.
 
-    Returns:
+    Returns
+    --------
         None
         
     """
