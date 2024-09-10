@@ -29,15 +29,15 @@ def retrieve_segments(datasets, varname: str = "ssha"):
     
     Parameters
     ------------
-    datasets : Dict
+    datasets: Dict
         Dictionary containing xarray.Datasets
-    varname : str, optional
+    varname: str, optional
         Variable name to fill in missing values.
         Defaults to "ssha"
 
     Returns
     ---------
-    segments_dict : Dict
+    segments_dict: Dict
         Dictionary containing segments (numpy.arrays)
     """
     segments_dict = {}
@@ -75,14 +75,14 @@ def calculate_psd(segments_dict):
     
     Parameters
     ------------
-    segments_dict : Dict
+    segments_dict: Dict
         Dictionary containing segments (numpy.arrays)
 
     Returns
     ---------
-    psd_dict : Dict
+    psd_dict: Dict
         Dictionary containing PSDs for each segment
-    freqs_dict : Dict
+    freqs_dict: Dict
         Dictionary containing the associated frequencies
     """
     fs = 0.5  # maybe it could be an argument?
@@ -117,18 +117,18 @@ def psd_mean_and_freq(psd_dict, freqs_dict):
 
     Parameters
     ------------
-    psd_dict : Dict
+    psd_dict: Dict
         A dictionary of numpy arrays containing the Power Spectral Densities (PSD) for segments.
         The arrays can be of different lengths.
-    freqs_dict : Dict
+    freqs_dict: Dict
         A dictionary containing the corresponding frequencies for each segment (numpy array)
 
     Returns
     ---------
-    psd_mean : np.ndarray
+    psd_mean: np.ndarray
         A numpy array containing the mean of the Power Spectral Densities (PSD) for each frequency point.
         The length of this array is equal to the maximum length of the arrays in psd_dict.
-    freqs_mean : np.ndarray 
+    freqs_mean: np.ndarray
         A numpy array containing frequency values of the longest column in freqs_dict
     """
     max_length = 0
@@ -168,17 +168,17 @@ def plot_psd(ax, freqs, psds, unit, psd_labels, title=None):
     
     Parameters
     ------------
-    ax : matplotlib.axes.Axes
+    ax: matplotlib.axes.Axes
         The axes on which to plot the PSD. 
-    freqs : np.ndarray
+    freqs: np.ndarray
         A numpy array containing frequency values.
-    psds : [np.ndarray, ...] | np.ndarray
+    psds: [np.ndarray, ...] | np.ndarray
         A list of numpy array or a single numpy array of PSD values corresponding to `freqs`.
-    unit : str
+    unit: str
         Unit of the physical quantity for which the PSD was computed.
-    psd_labels : [str, ...] | str, optional
+    psd_labels: [str, ...] | str, optional
         A list of labels or a single label for the PDS array(s).
-    title : str, optional
+    title: str, optional
         Title of the plot.
     """
     if isinstance(psds, np.ndarray):

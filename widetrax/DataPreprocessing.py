@@ -170,17 +170,17 @@ def fill_nan(datasets, varname: str = "ssha"):
 
     Parameters
     ------------
-    datasets : Dict
+    datasets: Dict
         Dictionary containing xarray.Datasets
-    varname : str, optional
+    varname: str, optional
         Variable name to fill in missing values.
         Defaults to "ssha"
 
     Returns
     ---------
-    has_converged : bool
+    has_converged: bool
         Indicates whether the method has converged, returns True if the method has converged, otherwise returns False
-    filled_dataset : Dict
+    filled_dataset: Dict
         Dictionary containing xarray.Datasets (with missing values filled in)
     """
     has_converged = True
