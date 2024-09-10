@@ -1,0 +1,18 @@
+# general
+**/__pycache__
+.pytest_cache
+.ipynb_checkpoints
+*.DS_Store
+
+# build stuff
+build
+dist
+*.egg-info
+junit
+docs/_build
+
+# IDE related
+.idea
+
+# git stuff
+!**/.gitkeep
