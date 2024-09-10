@@ -1,6 +1,5 @@
-from .__main__ import main  
-#from .Spectram import Spectram
-#from .DataPreprocessing import DataPreprocessing
+from . import Spectram
+from . import DataPreprocessing
+from .version import __version__  # noqa
 
-
-#__all__ = ["Spectram", "DataPreprocessing"]
+__all__ = ["Spectram", "DataPreprocessing"]
