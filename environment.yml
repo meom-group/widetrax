@@ -1,0 +1,10 @@
+name: widetrax
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pyinterp
+  - pip
+  - pip:
+      - -r requirements.txt
