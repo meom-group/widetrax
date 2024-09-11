@@ -1,0 +1,8 @@
+cartopy
+matplotlib
+netCDF4
+numpy
+pyinterp
+scipy
+xarray
+zarr

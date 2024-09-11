@@ -4,12 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "widetrax"
-version = "0.0.1"
 authors = [
     { name = "Amine Ouhechou", email = "amine.ouhechou@univ-grenoble-alpes.fr" },
     { name = "Julien Le Sommer", email = "julien.lesommer@univ-grenoble-alpes.fr" },
 ]
-
 
 description = "Computes the Power Spectrum density (PSD) from SWOT data"
 readme = "README.md"
@@ -21,11 +19,12 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "netCDF4",
-    "numpy",
-    "xarray"
-]
+
+dynamic = ["version", "dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+version = {attr = "widetrax.version.__version__"}
 
 [tool.setuptools.packages]
 find = { include = ["widetrax"] }
