@@ -32,7 +32,7 @@ def retrieve_segments(datasets, varname: str = "ssha"):
     datasets: Dict
         Dictionary containing xarray.Datasets
     varname: str, optional
-        Variable name to fill in missing values.
+        Variable name for which PSD will be computed.
         Defaults to "ssha"
 
     Returns
@@ -46,9 +46,11 @@ def retrieve_segments(datasets, varname: str = "ssha"):
     for key, dataset in datasets.items():
         print(f"Processing dataset {key + 1} among {len(datasets)}")
 
+        ds = dataset[[varname]]
+
         with ProcessPoolExecutor() as executor:
             futures = [
-                executor.submit(retrieve_segment, col, dataset, varname) for col in range(dataset.sizes["num_pixels"])
+                executor.submit(retrieve_segment, col, ds, varname) for col in range(dataset.sizes["num_pixels"])
             ]
 
             for future in as_completed(futures):
