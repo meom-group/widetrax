@@ -21,7 +21,7 @@ from version import __version__
 project = 'widetrax'
 copyright = '2024, Amine Ouhechou, Julien Le Sommer'
 author = 'Amine Ouhechou, Julien Le Sommer'
-release = '0.0.1'
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
