@@ -8,8 +8,6 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 import numpy as np
-import pyinterp
-import pyinterp.fill as fill
 import xarray as xr
 
 # =============================================================================
