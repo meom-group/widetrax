@@ -2,7 +2,7 @@ widetrax package
 =================
 
 modules
-----------
+-------
 
 .. toctree::
    :maxdepth: 5
