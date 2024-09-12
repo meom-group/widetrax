@@ -4,26 +4,26 @@
 
 def filtre_donnees(donnees, seuil_min, seuil_max, type_filtre="passe-bas"):
     """
-    Filtre les données en fonction des seuils spécifiés et du type de filtre choisi.
+    Filters the data based on the specified thresholds and the chosen filter type.
 
-    Cette fonction applique un filtre sur les données fournies, soit en mode passe-bas, soit en mode passe-haut.
-    Les données en dehors des seuils seront exclues.
-
-    :param donnees: (list ou ndarray) Liste ou tableau des données à filtrer.
-    :param seuil_min: (float) Le seuil minimal pour le filtrage des données.
-    :param seuil_max: (float) Le seuil maximal pour le filtrage des données.
-    :param type_filtre: (str, optionnel) Le type de filtre à appliquer, peut être "passe-bas" ou "passe-haut". Par défaut, "passe-bas".
+    This function applies a filter to the provided data, either in low-pass or high-pass mode. Data outside the thresholds will be excluded
     
-    :return: (list ou ndarray) Les données filtrées.
+    Parameters
+    -----------
+    param donnees : str
+        Path to the directory containing the NetCDF files
+    param seuil_min : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]
+    param seuil_max : str
+        the max seuil
+    param type_filtre : int
+        just for test
     
-    :raises ValueError: Si le type de filtre n'est ni "passe-bas" ni "passe-haut".
-    :raises TypeError: Si le type des données d'entrée n'est pas une liste ou un tableau numpy.
-    
-    :example:
-
-    >>> donnees = [0.5, 1.5, 2.0, 3.0, 4.5, 5.0]
-    >>> filtre_donnees(donnees, seuil_min=1.0, seuil_max=4.0, type_filtre="passe-bas")
-    [0.5, 1.5, 2.0, 3.0]
+    Returns
+    --------
+    donnees_filtrees : Dict
+        Dictionary containing the xarray.Datasets for the region
+        
     """
     if type_filtre not in ["passe-bas", "passe-haut"]:
         raise ValueError("Le type de filtre doit être 'passe-bas' ou 'passe-haut'.")
