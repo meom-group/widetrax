@@ -1,7 +1,7 @@
 widetrax package
 =================
 
-Submodules
+modules
 ----------
 
 .. toctree::
