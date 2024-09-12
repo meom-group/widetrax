@@ -123,3 +123,28 @@ def extract_xarray_in_region(directory, area):
             ds_area.close()
 
     return datasets
+
+# =============================================================================
+# test_function
+# =============================================================================
+
+def test_function(a, b):
+    """
+    This is a test function that adds two numbers.
+
+    Parameters
+    ----------
+    a : int or float
+        The first number.
+    b : int or float
+        The second number.
+
+    Returns
+    -------
+    result : int or float
+        The sum of `a` and `b`.
+
+    """
+    result = a + b
+    return result
+
