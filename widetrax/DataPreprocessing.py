@@ -12,79 +12,59 @@ import pyinterp
 import pyinterp.fill as fill
 import xarray as xr
 
-
 # =============================================================================
-# extract_xarray_in_region
+# retrieve_segments
 # =============================================================================
 
+def retrieve_segmentest(col, dataset, varname):
+    col_data = dataset.isel(num_pixels=col)
 
-def extract_xarray_in_region(directory, area):
+    if not np.all(np.isnan(col_data[varname])):
+        segment_data = col_data[varname].values.squeeze()
+
+        finite_idx = np.flatnonzero(np.isfinite(segment_data))
+        segment_data = segment_data[finite_idx.min():finite_idx.max()]
+
+        if not np.isnan(segment_data).any():
+            return segment_data
+
+    return None
+
+
+def retrieve_segmentsest(datasets, varname: str = "ssha"):
     """
-    Extracts xarray datasets from SWOT NetCDF data for a specific region
+    Extracts segments from xarray.datasets
     
-
     Parameters
     ------------
-    directory : str
-        Path to the directory containing the NetCDF files
-    area : list
-        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]
-    
+    datasets: Dict
+        Dictionary containing xarray.Datasets
+    varname: str, optional
+        Variable name for which PSD will be computed.
+        Defaults to "ssha"
 
     Returns
     ---------
-    datasets : Dict
-        Dictionary containing the xarray.Datasets for the region
-   
+    segments_dict: Dict
+        Dictionary containing segments (numpy.arrays)
     """
+    segments_dict = {}
+    counter = 0
 
-    lon_min, lat_min, lon_max, lat_max = area
-    datasets = {}
-    i = 0
+    for key, dataset in datasets.items():
+        print(f"Processing dataset {key + 1} among {len(datasets)}")
 
-    variables_to_load = ["ssha", "mdt", "latitude", "longitude"]
-    files_in_dir = os.listdir(directory)
+        ds = dataset[[varname]]
 
-    for filename in files_in_dir:
-        file_path = os.path.join(directory, filename)
+        with ProcessPoolExecutor() as executor:
+            futures = [
+                executor.submit(retrieve_segmentest, col, ds, varname) for col in range(ds.sizes["num_pixels"])
+            ]
 
-        ds_tmp = xr.open_dataset(file_path, chunks={})
-        variables_to_drop = [var for var in ds_tmp.variables if var not in variables_to_load]
-        ds_tmp.close()
-        del ds_tmp
+            for future in as_completed(futures):
+                result = future.result()
+                if result is not None:
+                    segments_dict[counter] = result
+                    counter += 1
 
-        # Open the file (lazy loading) excluding unnecessary variables
-        ds = xr.open_dataset(file_path, chunks={}, drop_variables=variables_to_drop)
-
-        if ds:
-            if lon_min < lon_max:
-                selection = (
-
-                        (ds['latitude'] >= lat_min) &
-                        (ds['latitude'] <= lat_max) &
-                        (ds['longitude'] >= lon_min) &
-                        (ds['longitude'] <= lon_max)
-                )
-
-            else:
-                selection = (
-
-                        (ds['latitude'] >= lat_min) &
-                        (ds['latitude'] <= lat_max) &
-                        (((ds['longitude'] >= lon_min) & (ds['longitude'] <= 360)) | (ds['longitude'] <= lon_max))
-
-                )
-
-            selection = selection.compute()
-
-            ds_area = ds.where(selection, drop=True)
-            ds.close()
-
-            if ds_area['latitude'].size > 0:
-                datasets[i] = ds_area
-                i += 1
-
-            ds_area.close()
-
-    return datasets
-
+    return segments_dict
