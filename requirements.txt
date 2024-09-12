@@ -6,5 +6,3 @@ scipy
 xarray
 zarr
 datetime
-re
-sys
