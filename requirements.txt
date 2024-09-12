@@ -7,3 +7,6 @@ xarray
 zarr
 collections
 datetime
+os
+re
+sys
