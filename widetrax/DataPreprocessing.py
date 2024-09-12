@@ -1,3 +1,5 @@
+import numpy as np
+
 # =============================================================================
 # filtre_donnees
 # =============================================================================
@@ -39,3 +41,71 @@ def filtre_donnees(donnees, seuil_min, seuil_max, type_filtre="passe-bas"):
         donnees_filtrees = [x for x in donnees if x >= seuil_min]
     
     return donnees_filtrees
+
+# =============================================================================
+# count_observations
+# =============================================================================
+
+def count_observations(datasets, area, resolution):
+    """
+    Calculates the number of available observations per bin in the region of interest.
+    
+    
+    Parameters
+    ------------
+    datasets : Dict
+        Dictionary containing xarray.Datasets
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]
+    resolution : float
+        Grid resolution
+
+    Returns
+    ---------
+    obs_count : np.ndarray
+        Array containing the number of observations per pixel
+    
+    """
+    lon_min, lat_min, lon_max, lat_max = area
+
+    # Define the grid
+    if lon_min > lon_max:  # if for example lon_min est 2W=358 et lon max 5E=5
+        lon_grid = np.concatenate([np.arange(lon_min, 360, resolution),
+                                   np.arange(0, lon_max, resolution)])
+    else:
+        lon_grid = np.arange(lon_min, lon_max, resolution)
+
+    # for latitudes
+    lat_grid = np.arange(lat_min, lat_max, resolution)
+
+    # Create an array filled with zeros
+    obs_count = np.full((len(lat_grid), len(lon_grid)), 0)
+
+    # Iterating on xarrays in datasets dictionnary
+    for key in range(len(datasets)):
+        # print(f"{key}/{len(datasets)}")
+
+        one_dtset = datasets[key].compute()
+
+        # Iterating on rows/columns
+        for j in range(one_dtset.ssha.shape[0]):
+            for k in range(one_dtset.ssha.shape[1]):
+                valeur = one_dtset.ssha[j, k]
+                if not np.isnan(valeur):
+                    lt = float(one_dtset.latitude[j, k])
+                    ln = float(one_dtset.longitude[j, k])
+
+                    # Find the corresponding indexes in the grid
+                    lon_index = int((ln - lon_min) / resolution)
+                    lat_index = int((lt - lat_min) / resolution)
+
+                    if lon_index < 0:
+                        lon_index = int((ln - (lon_min - 360)) / resolution)
+
+                    # Increment the corresponding element in obs_count
+                    obs_count[lat_index, lon_index] += 1
+
+    one_dtset.close()
+    del (one_dtset)
+
+    return obs_count
