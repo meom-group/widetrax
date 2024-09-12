@@ -6,3 +6,4 @@ scipy
 xarray
 zarr
 collections
+datetime
