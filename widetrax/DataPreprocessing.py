@@ -59,19 +59,19 @@ def filtre_donnees(donnees, seuil_min, seuil_max, type_filtre="passe-bas"):
 
 def extract_xarray_in_region(directory, area):
     """
-    Extracts xarray datasets from SWOT NetCDF data for a specific region
-    
+    Extracts xarray datasets from SWOT NetCDF data for a specific region.
+
     Parameters
-    -----------
+    ----------
     directory : str
-        Path to the directory containing the NetCDF files
+        Path to the directory containing the NetCDF files.
     area : list
-        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]
-    
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max].
+
     Returns
-    ---------
-    datasets : Dict
-        Dictionary containing the xarray.Datasets for the region
+    -------
+    datasets : dict
+        Dictionary containing the xarray.Datasets for the specified region.
    
     """
     lon_min, lat_min, lon_max, lat_max = area
