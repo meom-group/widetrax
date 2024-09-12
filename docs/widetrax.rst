@@ -9,4 +9,3 @@ modules
 
    widetrax.Spectram
    widetrax.DataPreprocessing
-   widetrax.trynewname
