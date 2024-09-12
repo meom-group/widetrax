@@ -52,28 +52,3 @@ def filtre_donnees(donnees, seuil_min, seuil_max, type_filtre="passe-bas"):
         donnees_filtrees = [x for x in donnees if x >= seuil_min]
     
     return donnees_filtrees
-
-# =============================================================================
-# test_function
-# =============================================================================
-
-def test_function(a, b):
-    """
-    This is a test function that adds two numbers.
-
-    Parameters
-    ----------
-    a : int or float
-        The first number.
-    b : int or float
-        The second number.
-
-    Returns
-    -------
-    result : int or float
-        The sum of `a` and `b`.
-
-    """
-    result = a + b
-    return result
-
