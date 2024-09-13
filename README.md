@@ -1,8 +1,12 @@
 [![Documentation Status](https://readthedocs.org/projects/widetrax/badge/?version=latest)](https://widetrax.readthedocs.io/en/latest/?badge=latest)
 # WideTrax
-Toolbox for manipulating wide-swath altimetry ocean data. 
 
-## Introcution
+**widetrax** is a package for manipulating wide-swath altimetry ocean data.
+It computes the power spectrum density (PSD) of Sea surface Height (SSH) for both phases/orbits of the SWOT mission.
 
+## Installation
 
-This is an open repository providing a tool for processing SWOT data. Specifically, it calculates the power spectrum of SWOT **« *Level-3 v1.0* »** data for any region of the world, and both phases/orbits of the mission.
+`widetrax` is Pip-installable:
+```shell
+pip install widetrax
+```
