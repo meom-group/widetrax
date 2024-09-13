@@ -183,3 +183,66 @@ def extract_xarray_in_region(directory, area):
             ds_area.close()
 
     return datasets
+
+# =============================================================================
+# fill_nan
+# =============================================================================
+
+def fill_nan(datasets, varname: str = "ssha"):
+    """
+    Fills in missing values (NaN) in each xarray.Dataset using Gauss-Seidel method.
+
+    Parameters
+    ------------
+    datasets: Dict
+        Dictionary containing xarray.Datasets
+    varname: str, optional
+        Variable name to fill in missing values.
+        Defaults to "ssha"
+
+    Returns
+    ---------
+    has_converged: bool
+        Indicates whether the method has converged, returns True if the method has converged, otherwise returns False
+    filled_dataset: Dict
+        Dictionary containing xarray.Datasets (with missing values filled in)
+    """
+    has_converged = True
+    filled_datasets = {}
+    new_key = 0
+    for key in range(len(datasets)):
+
+        # Selects only the variable of interest
+        data = datasets[key][[varname]]
+
+        latitudes = data["latitude"].values
+        longitudes = data["longitude"].values
+        values = data[varname].values
+
+        if longitudes.size > 0 and latitudes.size > 0:
+
+            # Replace all values in columns 33 and 34 with NaN (the two middle columns)
+            if values.shape[1] >= 34:
+                values[:, 33:35] = np.nan
+
+            # Identify columns entirely NaN
+            nan_columns = np.all(np.isnan(values), axis=0)
+
+            # fill NaN data
+            x_axis = pyinterp.core.Axis(longitudes[0, :], is_circle=True)
+            y_axis = pyinterp.core.Axis(latitudes[:, 0], is_circle=False)
+            grid = pyinterp.Grid2D(y_axis, x_axis, values)
+            _has_converged, filled_values = fill.gauss_seidel(grid, num_threads=16)
+            has_converged &= _has_converged
+
+            # Restore columns entirely NaN
+            filled_values[:, nan_columns] = np.nan
+
+            # Add filled values to the output dictionary
+            datasets[key][varname] = (("num_lines", "num_pixels"), filled_values)
+            filled_datasets[new_key] = datasets[key]
+            new_key = new_key + 1
+        else:
+            print(f"Size of longitudes/latitudes is zero for dict number {key}")
+
+    return has_converged, filled_datasets
