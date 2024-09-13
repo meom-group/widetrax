@@ -2,6 +2,14 @@ import numpy as np
 import xarray as xr
 import pyinterp
 import pyinterp.fill as fill
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from datetime import datetime, timedelta
+import os
+import re
+import sys
 
 # =============================================================================
 # filtre_donnees
@@ -249,3 +257,121 @@ def fill_nan(datasets, varname: str = "ssha"):
             print(f"Size of longitudes/latitudes is zero for dict number {key}")
 
     return has_converged, filled_datasets
+
+# =============================================================================
+# check_directory
+# =============================================================================
+
+def check_directory(database_path, start_date_str, end_date_str):
+    """
+    
+    Scans the folders in the `database_path` directory, identifies the folders 
+    containing NetCDF files whose dates are between `start_date_str` and `end_date_str`, 
+    and returns a list of these folder names.
+
+    
+    Parameters
+    ------------
+    database_path : str
+        Path to the `database` directory
+    start_date_str : str
+        Start date in 'YYYYMMDD' format
+    end_date_str : str
+        End date in 'YYYYMMDD' format
+    
+    Returns
+    ---------
+    
+    matching_folders : list
+        List of folder names containing NetCDF files within the specified date range
+        If an error occurs, an error message is printed and an empty list is returned.
+        
+    """
+
+    # Regex pattern to match folder names like cycle_001, cycle_002, etc.
+    folder_pattern = re.compile(r'cycle_\d{3}')
+    # Regex pattern to match the date in the file name SWOT........_YYYYMMDD...
+    file_pattern = re.compile(r'SWOT.*_(\d{8})T.*\.nc')
+
+    # Convert date strings to datetime objects
+    start_date = datetime.strptime(start_date_str, '%Y%m%d')
+    end_date = datetime.strptime(end_date_str, '%Y%m%d')
+
+    # List to store the names of folders that meet the criteria
+    matching_folders = []
+
+    try:
+        # List all items in the database directory
+        items = os.listdir(database_path)
+
+        for item in items:
+            folder_path = os.path.join(database_path, item)
+
+            # Check if the item is a directory and matches the pattern
+            if os.path.isdir(folder_path) and folder_pattern.match(item):
+                netcdf_files = [f for f in os.listdir(folder_path) if f.endswith('.nc')]
+                for nc_file in netcdf_files:
+                    match = file_pattern.search(nc_file)
+                    if match:
+                        file_date_str = match.group(1)
+                        file_date = datetime.strptime(file_date_str, '%Y%m%d')
+
+                        if start_date <= file_date <= end_date:
+                            matching_folders.append(item)
+                            break  # Stop checking files in this folder once a match is found
+
+        return matching_folders
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return []
+
+# =============================================================================
+# extract_xarrays_by_time
+# =============================================================================
+
+def extract_xarrays_by_time(database_path, start_date_str, end_date_str, area):
+    """
+    Processes folders in the `database_path` directory, applies the `extract_xarray_in_region` 
+    function to each folder that contains NetCDF files within the date range specified 
+    by `start_date_str` and `end_date_str`, and combines the results into a single dictionary.
+
+
+    Parameters
+    ------------
+    database_path : str
+        Path to the `database` directory
+    start_date_str : str
+        Start date in 'YYYYMMDD' format
+    end_date_str : str
+        End date in 'YYYYMMDD' format
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max]
+        
+        
+    Returns
+    ---------
+    
+    combined_datasets_dict : Dict
+        A dictionary of xarray.Datasets combining the results from `extract_xarray_in_region` function for each folder.
+        
+    """
+
+    matching_folders = check_directory(database_path, start_date_str, end_date_str)
+    combined_datasets_dict = defaultdict(list)
+    current_key = 0
+
+    for folder in matching_folders:
+        folder_path = os.path.join(database_path, folder)
+        result_dict = extract_xarray_in_region(folder_path, area)
+
+        # Add entries to the combined_dict with sequential keys
+        for value in result_dict.values():
+            combined_datasets_dict[current_key] = value
+            current_key += 1
+
+    # Convert defaultdict back to dict
+    combined_datasets_dict = dict(combined_datasets_dict)
+
+    return combined_datasets_dict
+
