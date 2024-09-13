@@ -1,7 +1,6 @@
 import numpy as np
 import xarray as xr
-import pyinterp
-import pyinterp.fill as fill
+
 
 # =============================================================================
 # filtre_donnees
