@@ -5,3 +5,4 @@ numpy
 scipy
 xarray
 zarr
+datetime

@@ -1,11 +1,11 @@
 widetrax package
 =================
 
-Submodules
-----------
+modules
+-------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 5
 
-   widetrax.DataPreprocessing
    widetrax.Spectram
+   widetrax.DataPreprocessing
