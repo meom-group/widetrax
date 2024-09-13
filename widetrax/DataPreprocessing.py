@@ -1,9 +1,5 @@
 import numpy as np
 import xarray as xr
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
-import matplotlib.pyplot as plt
-import numpy as np
 import pyinterp
 import pyinterp.fill as fill
 
