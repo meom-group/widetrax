@@ -14,7 +14,7 @@ Contents:
 ---------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 5
 
    Overview <overview>
    api
