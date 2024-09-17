@@ -556,27 +556,47 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
 
 
 def split_dsets_based_cnum(datasets_dict):
+    """
+    Splits xarray.dataset objects based on unique cycle and pass numbers.
+
+    The function takes a dictionary of xarray.dataset objects and splits each dataset into smaller datasets based on unique values of 'cycle_number' and 'pass_number'. 
+    The resulting datasets are stored in a new dictionary with sequential keys.
+    
+    Conditions:
+    A dataset is split if it contains at least 2 different 'cycle_number' values.
+    For each unique 'cycle_number', the dataset is further split if it contains at least 2 different 'pass_number' values.   
+    If an xarray.dataset in the input dictionary meets the splitting conditions (having at least 2 different 'cycle_number' and 'pass_number'), it is split into smaller xarray datasets. Otherwise, the original dataset is included as is.
+
+    Parameters
+    -----------
+    datasets_dict : Dict
+        A dictionary where each key corresponds to an xarray Dataset.
+        Each xarray Dataset is expected to have 'cycle_number' and 'pass_number' attributes.
+
+    Returns
+    --------
+    splited_dict : Dict
+        A new dictionary containing the split xarray.dataset objects.
+    """
 
     splited_dict = {}
     index = 0
 
     for key in range(len(datasets_dict)):
-        # Check if the condition is met (you can define your own condition here)
+        # Check if the condition is met(The datasets contain 2 cycle numbers.)
         if len(np.unique(datasets_dict[key].cycle_number.compute())) >= 2:
-            # recuperer le num de cycle
+            # Retrieve the cycle number.
             long_cycle = len(np.unique(datasets_dict[key].cycle_number.compute()))
-            # print(f"la longuer de cycle number est {long_cycle}")
 
             for i in np.arange(long_cycle - 1):
                 cycle = np.unique(datasets_dict[key].cycle_number.compute())[i]
                 ds_cycle = datasets_dict[key].where(datasets_dict[key]['cycle_number'].compute() == cycle.astype(float),
                                                     drop=True)
 
-                # condition séparation sur les pass number
+                # Condition separation based on the pass numbers.
                 if len(np.unique(ds_cycle.pass_number.compute())) >= 2:
 
                     long_pass = len(np.unique(ds_cycle.pass_number.compute()))
-                    # print(f"la longuer de pass number est {long_pass}")
 
                     for i in np.arange(long_pass - 1):
                         passs = np.unique(ds_cycle.pass_number.compute())[i]
