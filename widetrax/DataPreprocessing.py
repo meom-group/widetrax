@@ -477,7 +477,6 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
 
     # le nombre de fichiers
     nfiles = 0
-
     datasets_dict = {}
     index = 0
 
@@ -557,32 +556,6 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
 
 
 def split_dsets_based_cnum(datasets_dict):
-    """
-    Splits xarray.dataset objects based on unique cycle and pass numbers.
-
-    The function takes a dictionary of xarray.dataset objects and splits each dataset into 
-    smaller datasets based on unique values of 'cycle_number' and 'pass_number'. 
-    The resulting datasets are stored in a new dictionary with sequential keys.
-    
-    Conditions:
-    - A dataset is split if it contains at least 2 different 'cycle_number' values.
-    - For each unique 'cycle_number', the dataset is further split if it contains 
-      at least 2 different 'pass_number' values.
-      
-    If an xarray.dataset in the input dictionary meets the splitting conditions (having at least 2 different 'cycle_number' and 'pass_number'), it is split into smaller xarray datasets. Otherwise, the original dataset is included as is.
-
-    Parameters
-    ------------
-    datasets_dict : Dict
-        A dictionary where each key corresponds to an xarray Dataset.
-        Each xarray Dataset is expected to have 'cycle_number' and 'pass_number' attributes.
-
-    Returns
-    ---------
-    splited_dict : Dict
-        A new dictionary containing the split xarray.dataset objects.
-    
-    """
 
     splited_dict = {}
     index = 0
