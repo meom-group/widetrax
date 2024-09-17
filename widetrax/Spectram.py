@@ -8,57 +8,66 @@ import scipy.signal as signal
 # retrieve_segments
 # =============================================================================
 
-def retrieve_segment(col, dataset, varname):
-    col_data = dataset.isel(num_pixels=col)
-
-    if not np.all(np.isnan(col_data[varname])):
-        segment_data = col_data[varname].values.squeeze()
-
-        finite_idx = np.flatnonzero(np.isfinite(segment_data))
-        segment_data = segment_data[finite_idx.min():finite_idx.max()]
-
-        if not np.isnan(segment_data).any():
-            return segment_data
-
-    return None
-
-
-def retrieve_segments(datasets, varname: str = "ssha"):
+def retrieve_segments(datasets,FileType):
     """
     Extracts segments from xarray.datasets
     
     Parameters
-    ------------
-    datasets: Dict
+    ----------
+    datasets : Dict
         Dictionary containing xarray.Datasets
-    varname: str, optional
-        Variable name for which PSD will be computed.
-        Defaults to "ssha"
+    FileType : str
+        The file type used to calculate datasets, "NetCDF" or "Zarr"
 
     Returns
-    ---------
-    segments_dict: Dict
-        Dictionary containing segments (numpy.arrays)
+    -------
+    segments_dict : Dict
+        Dictionary containing segments (numpy.arrays).
+    
+
     """
     segments_dict = {}
     counter = 0
-
+    
+    #Calculation of Sea Surface Height (SSH) : SSH = SSHA + MDT
+    for ky in range(len(datasets)):
+        datasets[ky]['ssh'] = datasets[ky]['ssha'] + datasets[ky]['mdt']
+    
     for key, dataset in datasets.items():
-        print(f"Processing dataset {key + 1} among {len(datasets)}")
+        #print(f"starting processing dict number {key} among {len(datasets)}")
+        for col in range(dataset.dims['num_pixels']):
+            # Extract data for one column
+            col_data = dataset.isel(num_pixels=col)
+            
+            # Delete coords to avoid duplicates and variables we don't need
+            if FileType == "NetCDF":
+                col_dataset = col_data.drop_vars(['latitude', 'longitude','ssha', 'mdt'])
+                
+            elif FileType == "Zarr":
+                col_dataset = col_data.drop_vars(['latitude', 'longitude','ssha', 'mdt',
+                                                  'cycle_number','duacs_land_sea_mask','pass_number'])
+            else:
+                print("The specified format is not supported")
+            
+            
+            # Check whether the column is entirely NaN
+            if not np.all(np.isnan(col_dataset['ssh'])):
+                
+                segment_data = col_dataset.to_array().values.squeeze()
+                
+                # Remove NaN values at the beginning
+                while len(segment_data) > 0 and np.isnan(segment_data[0]):
+                    segment_data = segment_data[1:]
 
-        ds = dataset[[varname]]
-
-        with ProcessPoolExecutor() as executor:
-            futures = [
-                executor.submit(retrieve_segment, col, ds, varname) for col in range(ds.sizes["num_pixels"])
-            ]
-
-            for future in as_completed(futures):
-                result = future.result()
-                if result is not None:
-                    segments_dict[counter] = result
+                # Remove NaN values at the end
+                while len(segment_data) > 0 and np.isnan(segment_data[-1]):
+                    segment_data = segment_data[:-1]
+                
+                # Verify if any NaN values remain for islands or continents after interpolation
+                if not np.isnan(segment_data).any():
+                    segments_dict[counter] = segment_data
                     counter += 1
-
+                
     return segments_dict
 
 
