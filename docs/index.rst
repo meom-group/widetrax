@@ -17,4 +17,5 @@ Contents:
    :maxdepth: 5
 
    Overview <overview>
+   Examples
    api
