@@ -7,7 +7,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(os.getcwd()), "widetrax"))
 
 # Mock imports for modules that may not be installed in the documentation build environment
-autodoc_mock_imports = ['cartopy', 'matplotlib', 'numpy', 'pyinterp', 'xarray']
+autodoc_mock_imports = ['pyinterp']
 
 
 autodoc_member_order = "groupwise"
