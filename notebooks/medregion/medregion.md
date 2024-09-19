@@ -60,6 +60,6 @@ sp.plot_psd(ax_, freqs_mean, psds = psd_mean,psd_labels = "PSD",unit = "m2",titl
 
 
     
-![png](medregion/medregion_7_1.png)
+![png](medregion/medregion/medregion_7_1.png)
     
 
