@@ -4,5 +4,4 @@ netCDF4
 numpy
 scipy
 xarray
-zarr
 datetime
