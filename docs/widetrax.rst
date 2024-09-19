@@ -5,7 +5,8 @@ modules
 -------
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 2
 
-   widetrax.Spectram
    widetrax.DataPreprocessing
+   widetrax.Spectram
+   
