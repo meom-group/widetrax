@@ -1,2 +1,2 @@
-.. include:: ../notebooks/Medregion_files/Medregion.md
+.. include:: ../notebooks/Medregion.md
    :parser: myst_parser.sphinx_
