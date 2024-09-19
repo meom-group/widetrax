@@ -1,11 +1,12 @@
 .. include:: ../README.md
    :parser: myst_parser.sphinx_
 
-## Installation
+Installation
+===============
 
 `widetrax` is Pip-installable:
 
-::
+.. code-block:: bash
 
    pip install widetrax
 
