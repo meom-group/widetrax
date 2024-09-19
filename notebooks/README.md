@@ -1,1 +1,1 @@
-Here you will find examples illustrating the use of `widetrax`.
+In this section, you will find examples illustrating the use of `widetrax`
