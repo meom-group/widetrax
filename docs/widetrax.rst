@@ -5,7 +5,15 @@ modules
 -------
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 4
 
-   widetrax.Spectram
    widetrax.DataPreprocessing
+   widetrax.Spectram
+   
+Module contents
+---------------
+
+.. automodule:: widetrax
+   :members:
+   :undoc-members:
+   :show-inheritance:

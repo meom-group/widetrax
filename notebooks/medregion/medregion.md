@@ -1,3 +1,6 @@
+# Wave spectrum in the Mediterranean region
+
+
 ```python
 from widetrax import Spectram as sp
 from widetrax import DataPreprocessing as dp
@@ -6,9 +9,6 @@ import cartopy.crs as ccrs
 %reload_ext autoreload
 %autoreload 2
 ```
-
-# Wave spectrum in the Mediterranean region
-
 
 ```python
 # Required Variables
@@ -56,12 +56,6 @@ title = 'Mediterranean Region'
 sp.plot_psd(ax_, freqs_mean, psds = psd_mean,psd_labels = "PSD",unit = "m2",title=title)
 ```
 
-    /home/mp/ouhecha/Work24/codes/CH1/widetrax/notebooks/../widetrax/Spectram.py:221: RuntimeWarning: divide by zero encountered in divide
-      ax2 = ax.secondary_xaxis("bottom", functions=(lambda x: 1 / x, lambda x: 1 / x))
-
-
-
-    
 ![png](https://github.com/meom-group/widetrax/blob/main/notebooks/medregion/medregion_7_1.png?raw=true)
     
 
