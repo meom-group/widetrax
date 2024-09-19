@@ -6,6 +6,9 @@ import sys
 #sys.path.extend([os.path.dirname(os.getcwd()), os.path.join(os.path.dirname(os.getcwd()), "widetrax")])
 sys.path.append(os.path.join(os.path.dirname(os.getcwd()), "widetrax"))
 
+# Mock imports for modules that may not be installed in the documentation build environment
+autodoc_mock_imports = ['pyinterp', 'numpy','collections','re']
+
 autodoc_member_order = "groupwise"
 exclude_patterns = ["_build", "**tests**"]
 
