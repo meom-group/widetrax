@@ -442,7 +442,6 @@ def plot_obs_count(obs_count, area, obs_count2=None, title=None, title2=None, sa
 # =============================================================================         
 
 
-# Fonction pour lire les fichiers Zarr pour une plage de dates spécifique
 def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str, variables_to_keep):
     """
     
@@ -475,16 +474,16 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
     lat_min = area[1]
     lat_max = area[3]
 
-    # le nombre de fichiers
+    # files number
     nfiles = 0
     datasets_dict = {}
     index = 0
 
-    # Convertir les chaînes de date en objets datetime
+    # Convert date strings into datetime objects
     start_date = datetime.strptime(start_date_str, '%Y%m%d')
     end_date = datetime.strptime(end_date_str, '%Y%m%d')
 
-    # Parcourir chaque jour entre les dates de début et de fin
+    # Iterate through each day between the start and end dates
     current_date = start_date
     while current_date <= end_date:
         month = current_date.strftime('%m')
@@ -497,7 +496,7 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
 
                 zarr_ds = xr.open_zarr(day_directory)
 
-                # Garder uniquement les variables spécifiées
+                # Keep only the specified variables
                 zarr_ds = zarr_ds[variables_to_keep]
 
                 coord_vars = ['latitude', 'longitude']
@@ -525,12 +524,12 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
 
                 zarr_ds = zarr_ds.where(selection, drop=True)
 
-                # créer la variable ssha
+                # create ssha variable
                 zarr_ds['ssha'] = zarr_ds.duacs_ssha_karin_2_calibrated.where(zarr_ds.duacs_editing_flag == 0)
                 zarr_ds = zarr_ds.drop_vars('duacs_ssha_karin_2_calibrated')
                 zarr_ds = zarr_ds.drop_vars('duacs_editing_flag')
 
-                # créer la variable mdt
+                # create mdt variable
                 zarr_ds['mdt'] = zarr_ds.cvl_mean_dynamic_topography_cnes_cls_22
                 zarr_ds = zarr_ds.drop_vars('cvl_mean_dynamic_topography_cnes_cls_22')
 
@@ -544,7 +543,7 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
         else:
             print(f'The directory for month{month} does not exist')
 
-        # Passer au jour suivant
+        # Move to the next day
         current_date += timedelta(days=1)
 
     return datasets_dict
