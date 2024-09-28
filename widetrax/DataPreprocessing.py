@@ -42,7 +42,7 @@ def extract_xarray_in_region(directory, area):
     datasets = {}
     i = 0
 
-    variables_to_load = ["ssha", "mdt", "latitude", "longitude"]
+    variables_to_load = ["ssha", "mdt", "latitude", "longitude","quality_flag"]
     files_in_dir = os.listdir(directory)
 
     for filename in files_in_dir:
