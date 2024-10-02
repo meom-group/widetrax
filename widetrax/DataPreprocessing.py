@@ -42,19 +42,19 @@ def extract_xarray_in_region(directory, area):
     datasets = {}
     i = 0
 
-    variables_to_load = ["ssha", "mdt", "latitude", "longitude","quality_flag","ssha_karin","height_cor_xover"]
+    variables_to_load = ["latitude", "longitude","ssha_karin","height_cor_xover"]
     files_in_dir = os.listdir(directory)
 
     for filename in files_in_dir:
         file_path = os.path.join(directory, filename),
 
-        ds_tmp = xr.open_dataset(file_path, chunks={},engine="h5netcdf")
+        ds_tmp = xr.open_dataset(file_path, chunks={})
         variables_to_drop = [var for var in ds_tmp.variables if var not in variables_to_load]
         ds_tmp.close()
         del ds_tmp
 
         # Open the file (lazy loading) excluding unnecessary variables
-        ds = xr.open_dataset(file_path, chunks={}, drop_variables=variables_to_drop,engine="h5netcdf")
+        ds = xr.open_dataset(file_path, chunks={}, drop_variables=variables_to_drop)
 
         if ds:
             if lon_min < lon_max:
