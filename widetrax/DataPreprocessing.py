@@ -48,7 +48,7 @@ def extract_xarray_in_region(directory, area):
     for filename in files_in_dir:
         file_path = os.path.join(directory, filename),
 
-        ds_tmp = xr.open_dataset(file_path, chunks={})
+        ds_tmp = xr.open_dataset(file_path, chunks={},engine="netcdf4")
         variables_to_drop = [var for var in ds_tmp.variables if var not in variables_to_load]
         ds_tmp.close()
         del ds_tmp
