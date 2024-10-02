@@ -48,13 +48,13 @@ def extract_xarray_in_region(directory, area):
     for filename in files_in_dir:
         file_path = os.path.join(directory, filename),
 
-        ds_tmp = xr.open_dataset(file_path, chunks={},engine="netcdf4")
+        ds_tmp = xr.open_dataset(file_path, chunks={},engine="h5netcdf")
         variables_to_drop = [var for var in ds_tmp.variables if var not in variables_to_load]
         ds_tmp.close()
         del ds_tmp
 
         # Open the file (lazy loading) excluding unnecessary variables
-        ds = xr.open_dataset(file_path, chunks={}, drop_variables=variables_to_drop,engine="netcdf4")
+        ds = xr.open_dataset(file_path, chunks={}, drop_variables=variables_to_drop,engine="h5netcdf")
 
         if ds:
             if lon_min < lon_max:
