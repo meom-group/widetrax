@@ -54,11 +54,8 @@ def retrieve_segments(datasets,FileType):
             if not np.all(np.isnan(col_dataset['ssh'])):
                 
                 segment_data = col_dataset.to_array().values.squeeze()
-                
-                # Verify if any NaN values remain for islands or continents after interpolation
-                if not np.isnan(segment_data).any():
-                    segments_dict[counter] = segment_data
-                    counter += 1
+                segments_dict[counter] = segment_data
+                counter += 1
                 
     return segments_dict
 
