@@ -55,14 +55,6 @@ def retrieve_segments(datasets,FileType):
                 
                 segment_data = col_dataset.to_array().values.squeeze()
                 
-                # Remove NaN values at the beginning
-                while len(segment_data) > 0 and np.isnan(segment_data[0]):
-                    segment_data = segment_data[1:]
-
-                # Remove NaN values at the end
-                while len(segment_data) > 0 and np.isnan(segment_data[-1]):
-                    segment_data = segment_data[:-1]
-                
                 # Verify if any NaN values remain for islands or continents after interpolation
                 if not np.isnan(segment_data).any():
                     segments_dict[counter] = segment_data
