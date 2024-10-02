@@ -54,7 +54,7 @@ def extract_xarray_in_region(directory, area):
         del ds_tmp
 
         # Open the file (lazy loading) excluding unnecessary variables
-        ds = xr.open_dataset(file_path, chunks={}, drop_variables=variables_to_drop)
+        ds = xr.open_dataset(file_path, chunks={}, drop_variables=variables_to_drop,engine="netcdf4")
 
         if ds:
             if lon_min < lon_max:
