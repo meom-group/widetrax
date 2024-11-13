@@ -88,6 +88,115 @@ def extract_xarray_in_region(directory, area):
 
     return datasets
 
+# =============================================================================
+# extract_xarrays_by_time_and_region
+# =============================================================================
+
+
+def extract_xarrays_by_time_and_region(database_path, start_date_str, end_date_str, area):
+    """
+    Extracts xarray datasets from NetCDF data in folders within a specified date range and for a specific region.
+    
+    Parameters
+    ----------
+    database_path : str
+        Path to the directory containing subfolders with NetCDF files.
+    start_date_str : str
+        Start date in 'YYYYMMDD' format.
+    end_date_str : str
+        End date in 'YYYYMMDD' format.
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max].
+        
+    Returns
+    -------
+    combined_datasets_dict : Dict
+        A dictionary of xarray Datasets combining the results for each matching folder and region.
+    """
+    
+    lon_min, lat_min, lon_max, lat_max = area
+    matching_folders = check_directory(database_path, start_date_str, end_date_str)
+    combined_datasets_dict = defaultdict(list)
+    current_key = 0
+    
+    variables_to_load = ["ssha", "mdt", "latitude", "longitude"]
+
+    # Convert start_date_str and end_date_str to datetime objects for comparison
+    start_date = datetime.strptime(start_date_str, '%Y%m%d')
+    end_date = datetime.strptime(end_date_str, '%Y%m%d')
+
+    for folder in matching_folders:
+        folder_path = os.path.join(database_path, folder)
+        files_in_dir = os.listdir(folder_path)
+        
+        for filename in files_in_dir:
+            file_path = os.path.join(folder_path, filename)
+            
+            # Open the dataset to check the `time_coverage_begin` attribute
+            try:
+                ds_tmp = xr.open_dataset(file_path, chunks={})
+                time_coverage_begin = ds_tmp.attrs.get('time_coverage_begin')
+                ds_tmp.close()
+            except Exception as e:
+                print(f"Error reading file {filename}: {e}")
+                continue
+
+            if time_coverage_begin:
+                # Extract the date (YYYYMMDD) from time_coverage_begin (format: 'YYYY-MM-DDTHH:MM:SSZ')
+                file_date_str = time_coverage_begin.split('T')[0].replace('-', '')
+                file_date = datetime.strptime(file_date_str, '%Y%m%d')
+
+                # Check if the file's date falls within the desired range
+                if not (start_date <= file_date <= end_date):
+                    continue  # Skip this file if it's not in the date range
+
+            # If the file is within the desired date range, proceed with extraction
+            try:
+                ds_tmp = xr.open_dataset(file_path, chunks={})
+                variables_to_drop = [var for var in ds_tmp.variables if var not in variables_to_load]
+                ds_tmp.close()
+                del ds_tmp
+
+                ds = xr.open_dataset(file_path, chunks={}, drop_variables=variables_to_drop)
+
+                if ds:
+                    # Apply geographical selection for the dataset
+                    if lon_min < lon_max:
+                        selection = (
+                            (ds['latitude'] >= lat_min) &
+                            (ds['latitude'] <= lat_max) &
+                            (ds['longitude'] >= lon_min) &
+                            (ds['longitude'] <= lon_max)
+                        )
+                    else:
+                        selection = (
+                            (ds['latitude'] >= lat_min) &
+                            (ds['latitude'] <= lat_max) &
+                            (((ds['longitude'] >= lon_min) & (ds['longitude'] <= 360)) |
+                             (ds['longitude'] <= lon_max))
+                        )
+
+                    selection = selection.compute()
+
+                    # Extract data for the region
+                    ds_area = ds.where(selection, drop=True)
+                    ds.close()
+
+                    # Add the dataset to the combined dictionary if it contains data
+                    if ds_area['latitude'].size > 0:
+                        combined_datasets_dict[current_key] = ds_area
+                        current_key += 1
+
+                    ds_area.close()
+            except Exception as e:
+                print(f"Error processing file {filename}: {e}")
+                continue
+    
+    # Convert defaultdict back to a regular dictionary
+    combined_datasets_dict = dict(combined_datasets_dict)
+    
+    return combined_datasets_dict
+
 
 # =============================================================================
 # count_observations
