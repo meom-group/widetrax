@@ -93,7 +93,7 @@ def extract_xarray_in_region(directory, area):
 # =============================================================================
 
 
-def extract_xarrays_by_time_and_region(database_path, start_date_str, end_date_str, area):
+def extract_xarrays_by_time_and_region(database_path, start_date_str, end_date_str, area,variables_to_load=None):
     """
     Extracts xarray datasets from NetCDF data in folders within a specified date range and for a specific region.
     
@@ -107,6 +107,8 @@ def extract_xarrays_by_time_and_region(database_path, start_date_str, end_date_s
         End date in 'YYYYMMDD' format.
     area : list
         List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max].
+    variables_to_load : list, optional
+        List of variable names to load from each dataset. Defaults to ["ssha", "mdt", "latitude", "longitude"].   
         
     Returns
     -------
@@ -119,7 +121,9 @@ def extract_xarrays_by_time_and_region(database_path, start_date_str, end_date_s
     combined_datasets_dict = defaultdict(list)
     current_key = 0
     
-    variables_to_load = ["ssha", "mdt", "latitude", "longitude"]
+    # Set default variables to load if not provided
+    if variables_to_load is None:
+        variables_to_load = ["ssha", "mdt", "latitude", "longitude"]
 
     # Convert start_date_str and end_date_str to datetime objects for comparison
     start_date = datetime.strptime(start_date_str, '%Y%m%d')
