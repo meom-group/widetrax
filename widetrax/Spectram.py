@@ -8,7 +8,7 @@ import scipy.signal as signal
 # retrieve_segments
 # =============================================================================
 
-def retrieve_segments(datasets,FileType):
+def retrieve_segments(datasets,FileType,namevar=None):
     """
     Extracts segments from xarray.datasets
     
@@ -18,7 +18,10 @@ def retrieve_segments(datasets,FileType):
         Dictionary containing xarray.Datasets
     FileType : str
         The file type used to calculate datasets, "NetCDF" or "Zarr"
-
+    namevar : str, optional
+        The variable name used to calculate PSD.
+        Default is 'ssha'.
+        
     Returns
     -------
     segments_dict : Dict
@@ -31,7 +34,7 @@ def retrieve_segments(datasets,FileType):
     
     #Calculation of Sea Surface Height (SSH) : SSH = SSHA + MDT
     for ky in range(len(datasets)):
-        datasets[ky]['ssh'] = datasets[ky]['ssha'] + datasets[ky]['mdt']
+        datasets[ky]['ssh'] = datasets[ky][namevar] + datasets[ky]['mdt']
     
     for key, dataset in datasets.items():
         #print(f"starting processing dict number {key} among {len(datasets)}")
@@ -39,31 +42,30 @@ def retrieve_segments(datasets,FileType):
             # Extract data for one column
             col_data = dataset.isel(num_pixels=col)
             
-            # Delete coords to avoid duplicates and variables we don't need
-            if FileType == "NetCDF":
-                col_dataset = col_data.drop_vars(['latitude', 'longitude','ssha', 'mdt'])
-                
-            elif FileType == "Zarr":
-                col_dataset = col_data.drop_vars(['latitude', 'longitude','ssha', 'mdt',
-                                                  'cycle_number','duacs_land_sea_mask','pass_number'])
-            else:
-                print("The specified format is not supported")
+            # Drop unnecessary variables based on FileType
+            drop_vars = ['latitude', 'longitude', namevar, 'mdt']
+            if FileType == "Zarr":
+                drop_vars.extend(['cycle_number', 'duacs_land_sea_mask', 'pass_number'])
+            elif FileType != "NetCDF":
+                raise ValueError(f"Unsupported FileType: {FileType}")
+            
+            col_dataset = col_data.drop_vars(drop_vars, errors="ignore")
             
             
-            # Check whether the column is entirely NaN
-            if not np.all(np.isnan(col_dataset['ssh'])):
-                
-                segment_data = col_dataset.to_array().values.squeeze()
+            # Extract and clean segment data
+            ssh_data = col_dataset['ssh'].values
+            if np.any(~np.isnan(ssh_data)):
+                segment_data = ssh_data[~np.isnan(ssh_data)]  # Remove NaNs directly
                 
                 # Remove NaN values at the beginning
-                while len(segment_data) > 0 and np.isnan(segment_data[0]):
+                while len(segment_data) > 0 and np.isnan(segment_data[0].item() if np.ndim(segment_data[0]) else segment_data[0]):
                     segment_data = segment_data[1:]
-
+                
                 # Remove NaN values at the end
-                while len(segment_data) > 0 and np.isnan(segment_data[-1]):
+                while len(segment_data) > 0 and np.isnan(segment_data[-1].item() if np.ndim(segment_data[-1]) else segment_data[-1]):
                     segment_data = segment_data[:-1]
                 
-                # Verify if any NaN values remain for islands or continents after interpolation
+                # Store segment if it has no remaining NaNs
                 if not np.isnan(segment_data).any():
                     segments_dict[counter] = segment_data
                     counter += 1
@@ -76,7 +78,7 @@ def retrieve_segments(datasets,FileType):
 # =============================================================================
 
 def calculate_segment_psd(segment_data, fs):
-    if len(segment_data) > 199:  # Check segment length
+    if len(segment_data) > 120:  # Check segment length
         return signal.welch(segment_data, fs=fs, nperseg=len(segment_data), noverlap=0)
 
 
