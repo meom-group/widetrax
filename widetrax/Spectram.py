@@ -37,7 +37,6 @@ def retrieve_segments(datasets,FileType,namevar=None):
         datasets[ky]['ssh'] = datasets[ky][namevar] + datasets[ky]['mdt']
     
     for key, dataset in datasets.items():
-        #print(f"starting processing dict number {key} among {len(datasets)}")
         for col in range(dataset.dims['num_pixels']):
             # Extract data for one column
             col_data = dataset.isel(num_pixels=col)
@@ -74,15 +73,19 @@ def retrieve_segments(datasets,FileType,namevar=None):
 
 
 # =============================================================================
-# calculate_psd
+# _calculate_segment_psd
 # =============================================================================
 
 def calculate_segment_psd(segment_data, fs):
     if len(segment_data) > 120:  # Check segment length
         return signal.welch(segment_data, fs=fs, nperseg=len(segment_data), noverlap=0)
 
+# =============================================================================
+# calculate_psd
+# =============================================================================
 
-def calculate_psd(segments_dict):
+
+def calculate_psd(segments_dict,fs=None):
     """
     Computes the power spectral density (PSD)
     
@@ -90,7 +93,9 @@ def calculate_psd(segments_dict):
     ------------
     segments_dict: Dict
         Dictionary containing segments (numpy.arrays)
-
+    fs: float, optional
+        sampling frequency
+        Default is 0.5
     Returns
     ---------
     psd_dict: Dict
@@ -98,14 +103,15 @@ def calculate_psd(segments_dict):
     freqs_dict: Dict
         Dictionary containing the associated frequencies
     """
-    fs = 0.5  # maybe it could be an argument?
+    if fs is None :
+        fs = 0.5  # maybe it could be an argument?
 
     psd_dict = {}
     freqs_dict = {}
     counter = 0
 
     with ProcessPoolExecutor() as executor:
-        futures = [executor.submit(calculate_segment_psd, segment_data, fs) for segment_data in segments_dict.values()]
+        futures = [executor.submit(_calculate_segment_psd, segment_data, fs) for segment_data in segments_dict.values()]
 
         for future in as_completed(futures):
             result = future.result()
