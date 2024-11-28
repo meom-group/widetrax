@@ -555,7 +555,7 @@ def plot_obs_count(obs_count, area, obs_count2=None, title=None, title2=None, sa
 # =============================================================================         
 
 
-def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str, variables_to_keep):
+def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str, variables_to_keep=None):
     """
     
     Reads Zarr files from a directory structure organized by month and day, converts them into a dictionnary of xarray.Dataset objects, retains only specified variables, and extracts a specific geographical region based on latitude and longitude limits.
@@ -572,8 +572,8 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
     end_date_str : str
         The desired end date in the format 'YYYYMMDD'.
     
-    variables_to_keep : list of str
-        A list of variable names to retain in each xarray.Dataset.
+    variables_to_keep : list of str, optional
+        A list of variable names to retain in each xarray.Dataset. If None, all variables are retained.
     
     Returns
     ---------
@@ -609,8 +609,9 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
 
                 zarr_ds = xr.open_zarr(day_directory)
 
-                # Keep only the specified variables
-                zarr_ds = zarr_ds[variables_to_keep]
+                # Keep only the specified variables if variables_to_keep is not None
+                if variables_to_keep is not None:
+                    zarr_ds = zarr_ds[variables_to_keep]
 
                 coord_vars = ['latitude', 'longitude']
                 zarr_ds = zarr_ds.set_coords(coord_vars)
