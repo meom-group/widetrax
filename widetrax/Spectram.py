@@ -76,7 +76,7 @@ def retrieve_segments(datasets,FileType,namevar="ssha"):
 # _calculate_segment_psd
 # =============================================================================
 
-def calculate_segment_psd(segment_data, fs):
+def _calculate_segment_psd(segment_data, fs):
     if len(segment_data) > 120:  # Check segment length
         return signal.welch(segment_data, fs=fs, nperseg=len(segment_data), noverlap=0)
 
