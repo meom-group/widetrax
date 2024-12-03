@@ -8,7 +8,7 @@ import scipy.signal as signal
 # retrieve_segments
 # =============================================================================
 
-def retrieve_segments(datasets,FileType,namevar=None):
+def retrieve_segments(datasets,FileType,namevar="ssha"):
     """
     Extracts segments from xarray.datasets
     
