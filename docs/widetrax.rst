@@ -9,7 +9,7 @@ modules
 
    widetrax.DataPreprocessing
    widetrax.Spectram
-   widetrax.Grids
+   widetrax.Grads
    
 Module contents
 ---------------
