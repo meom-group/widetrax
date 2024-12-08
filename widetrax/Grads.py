@@ -14,13 +14,13 @@ from matplotlib.ticker import MaxNLocator
 # compute_vorticity_1_ds
 # =============================================================================
 
+
 def compute_vorticity_1_ds(dataset, variable_name="ssha", mask=None):
     """
     Compute the vorticity from a single xarray dataset.
 
     Parameters
-    ----------
-    
+    -----------
     dataset : xarray.Dataset
         Dataset containing geophysical variables like `ssha`, `ssh`, or `ssh_filtered`.
     variable_name : str
@@ -29,12 +29,11 @@ def compute_vorticity_1_ds(dataset, variable_name="ssha", mask=None):
         Mask array indicating zones to exclude (1 for land, 0 for ocean).
         If None, a zero array is used.
 
+
     Returns
-    -------
-    
+    --------
     vorticity_f : np.ndarray
         2D array of vorticity.
-        
     """
     
     if variable_name not in dataset:
@@ -74,7 +73,6 @@ def compute_vorticity_1_ds(dataset, variable_name="ssha", mask=None):
 # interpolate_to_f_grid
 # =============================================================================
 
-
 def interpolate_to_f_grid(var):
     """
     Interpolates a variable defined on the U or V grid to place it on the F grid (at the corners).
@@ -83,6 +81,7 @@ def interpolate_to_f_grid(var):
     ----------
     var : ndarray
         Variable defined on the U or V grid.
+
 
     Returns
     -------
@@ -104,7 +103,7 @@ def interpolate_to_f_grid(var):
     return var_f
 
 # =============================================================================
-# interpolate_to_f_grid
+# compute_strain_1_ds
 # =============================================================================
 
 
@@ -113,7 +112,7 @@ def compute_strain_1_ds(dataset, variable_name="ssha", mask=None):
     Compute the strain magnitude from a single xarray dataset.
 
     Parameters
-    ----------
+    -----------
     
     dataset : xarray.Dataset
         Dataset containing geophysical variables like `ssha`, `ssh`, or `ssh_filtered`.
@@ -123,11 +122,12 @@ def compute_strain_1_ds(dataset, variable_name="ssha", mask=None):
         Mask array indicating zones to exclude (1 for land, 0 for ocean).
         If None, a zero array is used.
 
+
     Returns
-    ----------
-    
+    --------
     strain_f : np.ndarray
         2D array of strain magnitude.
+        
     """
     if variable_name not in dataset:
         raise ValueError(f"The dataset does not contain the variable '{variable_name}'.")
@@ -178,8 +178,8 @@ def compute_vorticity(datasets_dict, variable_name="ssha", return_1D=True):
     """
     Compute vorticity for multiple xarray datasets.
 
-    Parameters:
-    ----------
+    Parameters
+    -----------
     datasets_dict : dict
         A dictionary of xarray datasets, where each key is a dataset identifier, and each value is an xarray dataset.
 
@@ -190,8 +190,8 @@ def compute_vorticity(datasets_dict, variable_name="ssha", return_1D=True):
         If True, returns the vorticity as a flattened 1D array alongside the 2D arrays. 
         If False, returns only the 2D arrays.
 
-    Returns:
-    -------
+    Returns
+    --------
     vorticity_1D : ndarray (optional)
         A concatenated 1D array of valid (non-NaN) vorticity values across all datasets.
 
@@ -239,8 +239,8 @@ def compute_strain(datasets_dict, variable_name="ssha", return_1D=True):
     """
     Compute strain for multiple xarray datasets.
 
-    Parameters:
-    ----------
+    Parameters
+    -----------
     datasets_dict : dict
         A dictionary of xarray datasets, where each key is a dataset identifier, and each value is an xarray dataset.
 
@@ -251,8 +251,8 @@ def compute_strain(datasets_dict, variable_name="ssha", return_1D=True):
         If True, returns the strain as a flattened 1D array alongside the 2D arrays. 
         If False, returns only the 2D arrays.
 
-    Returns:
-    -------
+    Returns
+    --------
     strain_1D : ndarray (optional)
         A concatenated 1D array of valid (non-NaN) strain values across all datasets.
 
@@ -309,10 +309,10 @@ def histo_vorticity_strain(final_vorti_data, final_strain_data):
     final_strain_data: ndarray
         1D array of strain data.
 
-    Returns:
-    -------
-    
+    Returns
+    --------
     Displays the plot and saves it as a PNG file.
+    
     """
     #
     plt.figure(figsize=(8, 4))
