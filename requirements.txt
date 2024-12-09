@@ -6,3 +6,4 @@ scipy
 xarray
 datetime
 jax
+jaxparrow
