@@ -12,7 +12,7 @@ authors = [
 description = "Computes the Power Spectrum density (PSD) from SWOT data"
 readme = "README.md"
 requires-python = ">=3.9"
-keywords = ["PSD", "SWOT"]
+keywords = ["PSD", "SWOT","Vorticity","Strain"]
 license = {text = "Apache-2.0"}
 classifiers = [
     "Programming Language :: Python :: 3",
