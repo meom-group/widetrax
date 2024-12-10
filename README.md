@@ -1,5 +1,6 @@
 [![Documentation Status](https://readthedocs.org/projects/widetrax/badge/?version=latest)](https://widetrax.readthedocs.io/en/latest/?badge=latest)
 ![PyPI - Version](https://img.shields.io/pypi/v/widetrax)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/widetrax)
 
 # WideTrax
 ## Description
