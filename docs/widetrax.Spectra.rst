@@ -1,7 +1,7 @@
-widetrax.Spectram module
+widetrax.Spectra module
 ========================
 
-.. automodule:: widetrax.Spectram
+.. automodule:: widetrax.Spectra
    :members:
    :undoc-members:
    :show-inheritance:
