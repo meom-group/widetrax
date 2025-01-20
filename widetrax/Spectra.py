@@ -1,5 +1,4 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
-
 import numpy as np
 import scipy.signal as signal
 
@@ -73,10 +72,10 @@ def retrieve_segments(datasets,FileType,namevar="ssha"):
 
 
 # =============================================================================
-# _calculate_segment_psd
+# calculate_segment_psd
 # =============================================================================
 
-def _calculate_segment_psd(segment_data, fs):
+def calculate_segment_psd(segment_data, fs):
     if len(segment_data) > 120:  # Check segment length
         return signal.welch(segment_data, fs=fs, nperseg=len(segment_data), noverlap=0)
 
@@ -111,7 +110,7 @@ def calculate_psd(segments_dict,fs=None):
     counter = 0
 
     with ProcessPoolExecutor() as executor:
-        futures = [executor.submit(_calculate_segment_psd, segment_data, fs) for segment_data in segments_dict.values()]
+        futures = [executor.submit(calculate_segment_psd, segment_data, fs) for segment_data in segments_dict.values()]
 
         for future in as_completed(futures):
             result = future.result()

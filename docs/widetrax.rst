@@ -8,7 +8,7 @@ modules
    :maxdepth: 4
 
    widetrax.DataPreprocessing
-   widetrax.Spectram
+   widetrax.Spectra
    widetrax.Grads
    
 Module contents
