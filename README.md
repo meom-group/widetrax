@@ -7,7 +7,7 @@
 
 **WideTrax** is a powerful package designed to process and analyze wide-swath altimetry ocean data effortlessly. 
 
-## ✨ Key Features  
+### ✨ Key Features  
 1️⃣ **Compute PSD (Power Spectral Density):**  
    WideTrax calculates the **Power Spectral Density (PSD)** of **Sea Surface Height (SSH)** for both phases and orbits of the **SWOT mission** in any region of the world.  
 
@@ -19,7 +19,7 @@
 3️⃣ **Other Calculations:**  
    - 🌀 Compute **vorticity** and **strain** along the track.  
 
-## 🌐 Flexibility  
+### 🌐 Flexibility  
 WideTrax allows you to manipulate **SWOT data** both locally 🖥️ and from an **S3 endpoint** ☁️.
 
 See the full [documentation](https://widetrax.readthedocs.io/en/latest/)!
