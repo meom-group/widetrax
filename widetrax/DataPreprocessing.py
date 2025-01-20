@@ -42,7 +42,7 @@ def extract_xarray_in_region(directory, area):
     datasets = {}
     i = 0
 
-    variables_to_load = ["ssha", "mdt", "latitude", "longitude","quality_flag"]
+    variables_to_load = ["ssha", "mdt", "latitude", "longitude","quality_flag","time"]
     files_in_dir = os.listdir(directory)
 
     for filename in files_in_dir:
@@ -603,8 +603,10 @@ def read_zarr_to_xarray_dict(base_directory, area, start_date_str, end_date_str,
         day = current_date.strftime('%d')
 
         month_directory = os.path.join(base_directory, f'month={month}')
+        #print(month_directory)
         if os.path.exists(month_directory):
             day_directory = os.path.join(month_directory, f'day={day}')
+            #print(day_directory)
             if os.path.exists(day_directory):
 
                 zarr_ds = xr.open_zarr(day_directory)

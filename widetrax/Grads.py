@@ -174,7 +174,7 @@ def compute_strain_1_ds(dataset, variable_name="ssha", mask=None):
 # =============================================================================
 
 
-def compute_vorticity(datasets_dict, variable_name="ssha", return_1D=True):
+def compute_vorticity(datasets_dict, variable_name="ssha"):
     """
     Compute vorticity for multiple xarray datasets.
 
@@ -186,20 +186,13 @@ def compute_vorticity(datasets_dict, variable_name="ssha", return_1D=True):
     variable_name : str, optional (default: "ssha")
         The name of the variable to compute vorticity for.
 
-    return_1D : bool, optional (default: True)
-        If True, returns the vorticity as a flattened 1D array alongside the 2D arrays. 
-        If False, returns only the 2D arrays.
-
     Returns
     --------
-    vorticity_1D : ndarray (optional)
-        A concatenated 1D array of valid (non-NaN) vorticity values across all datasets.
-
     vorticity_2D : dict
         A dictionary containing the 2D vorticity arrays for each dataset.
 
     """
-    vorticity_1D = []
+
     vorticity_2D = {}
 
 
@@ -214,19 +207,8 @@ def compute_vorticity(datasets_dict, variable_name="ssha", return_1D=True):
             # Save 2D arrays in dictionaries
             vorticity_2D[ds_num] = vorticity
 
-            if return_1D:
-                # Flatten arrays and remove NaN values
-                vorti_data = vorticity.flatten()
-                valid_mask = ~np.isnan(vorti_data)
-                vorticity_1D.append(vorti_data[valid_mask])
-
         else:
             print(f"Dataset '{ds_num}' is empty or too small to process.")
-
-    if return_1D:
-        vorticity_1D = np.concatenate(vorticity_1D)
-
-        return vorticity_1D, vorticity_2D
 
     return vorticity_2D
 
@@ -235,7 +217,7 @@ def compute_vorticity(datasets_dict, variable_name="ssha", return_1D=True):
 # compute_strain
 # =============================================================================
 
-def compute_strain(datasets_dict, variable_name="ssha", return_1D=True):
+def compute_strain(datasets_dict, variable_name="ssha"):
     """
     Compute strain for multiple xarray datasets.
 
@@ -247,20 +229,13 @@ def compute_strain(datasets_dict, variable_name="ssha", return_1D=True):
     variable_name : str, optional (default: "ssha")
         The name of the variable to compute strain for.
 
-    return_1D : bool, optional (default: True)
-        If True, returns the strain as a flattened 1D array alongside the 2D arrays. 
-        If False, returns only the 2D arrays.
-
     Returns
     --------
-    strain_1D : ndarray (optional)
-        A concatenated 1D array of valid (non-NaN) strain values across all datasets.
-
     strain_2D : dict
         A dictionary containing the 2D strain arrays for each dataset.
 
     """
-    strain_1D = []
+    
     strain_2D = {}
 
 
@@ -274,22 +249,58 @@ def compute_strain(datasets_dict, variable_name="ssha", return_1D=True):
 
             # Save 2D arrays in dictionaries
             strain_2D[ds_num] = strain
-
-            if return_1D:
-                # Flatten arrays and remove NaN values
-                strain_data = strain.flatten()
-                valid_mask = ~np.isnan(strain_data)
-                strain_1D.append(strain_data[valid_mask])
-
         else:
             print(f"Dataset '{ds_num}' is empty or too small to process.")
 
-    if return_1D:
-        strain_1D = np.concatenate(strain_1D)
-
-        return strain_1D, strain_2D
-
     return strain_2D
+
+# =============================================================================
+# process_2D_to_1D
+# =============================================================================
+
+
+def process_2D_to_1D(vorticity_2D, strain_2D):
+    """
+    Process dictionaries of 2D arrays for vorticity and strain, converting them to aligned 1D arrays.
+
+    Parameters
+    ----------
+    vorticity_2D : dict
+        Dictionary containing 2D arrays of vorticity for each dataset (key: dataset identifier).
+
+    strain_2D : dict
+        Dictionary containing 2D arrays of strain for each dataset (key: dataset identifier).
+
+    Returns
+    -------
+    vorticity_1D : ndarray
+        A single 1D array of aligned vorticity values across all datasets.
+
+    strain_1D : ndarray
+        A single 1D array of aligned strain values across all datasets.
+    """
+    vorticity_1D = []
+    strain_1D = []
+
+    for key in vorticity_2D:
+        # Flatten the 2D arrays
+        vorticity_data = vorticity_2D[key].flatten()
+        strain_data = strain_2D[key].flatten()
+        
+        # Create a mask to filter valid data
+        valid_mask = ~np.isnan(vorticity_data) & ~np.isnan(strain_data)
+        
+        # Apply the mask to both arrays
+        vorticity_1D.append(vorticity_data[valid_mask])
+        strain_1D.append(strain_data[valid_mask])
+    
+    # Concatenate all the arrays into a single 1D array
+    vorticity_1D = np.concatenate(vorticity_1D)
+    strain_1D = np.concatenate(strain_1D)
+    
+    return vorticity_1D, strain_1D
+
+
 
 # =============================================================================
 # histo_vorticity_strain
