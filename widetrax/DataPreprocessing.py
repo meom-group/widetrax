@@ -12,6 +12,10 @@ import pyinterp
 import pyinterp.fill as fill
 import xarray as xr
 
+import s3fs 
+import pandas as pd
+import cv2
+from natsort import natsorted
 
 # =============================================================================
 # extract_xarray_in_region
@@ -729,10 +733,10 @@ def split_dsets_based_cnum(datasets_dict):
 
 
 # =============================================================================
-# remove_duplicates_from_sys_path
+# _remove_duplicates_from_sys_path
 # ============================================================================= 
 
-def remove_duplicates_from_sys_path():
+def _remove_duplicates_from_sys_path():
     """
     Removes duplicates from the sys.path list while preserving the order of elements.
 
@@ -751,3 +755,358 @@ def remove_duplicates_from_sys_path():
             new_sys_path.append(path)
             seen.add(path)
     sys.path = new_sys_path
+
+    
+# =============================================================================
+# get_matching_cycles
+# =============================================================================     
+
+
+def get_matching_cycles(file_path, start_date_str, end_date_str):
+    """
+    Fetches a CSV file (local or S3) and finds cycle_numbers corresponding to a date range.
+    
+    Parameters
+    ------------
+    file_path : str
+        Path to the file. Can be an S3 URL.
+    start_date_str : str
+        The desired start date in the format 'YYYYMMDD'.
+    end_date_str : str
+        The desired end date in the format 'YYYYMMDD'.
+          
+    Returns
+    ---------
+    cycle_numbers : list
+        List of cycle_numbers that match the date range.
+        
+    """
+    
+    data = pd.read_csv(file_path)
+    
+    # Data cleaning
+    data = data.iloc[2:].reset_index(drop=True)
+    data.columns = ['cycle_number', 'start_time', 'end_time']
+    data['cycle_number'] = data['cycle_number'].astype(str)
+    data['start_time'] = pd.to_datetime(data['start_time'], errors='coerce')
+    data['end_time'] = pd.to_datetime(data['end_time'], errors='coerce')
+    data = data.dropna(subset=['start_time', 'end_time']).reset_index(drop=True)
+    
+    # Convert input dates to datetime
+    start_date = datetime.strptime(start_date_str, "%d%m%Y")
+    end_date = datetime.strptime(end_date_str, "%d%m%Y")
+    
+    # Filter for matching cycles
+    matching_cycles = data[
+        (data['start_time'] <= end_date) & (data['end_time'] >= start_date)
+    ]['cycle_number'].tolist()
+    
+    return matching_cycles
+
+
+# =============================================================================
+# read_swot_ncfiles_S3folder
+# =============================================================================
+
+def read_swot_ncfiles_S3folder(
+    s3_folder,
+    endpoint_url,
+    area,
+    engine="h5netcdf"
+):
+    """
+    Load NetCDF files from S3 and filter them based on the region of interest.
+    
+    Parameters
+    ----------
+    s3_folder : str
+        Path to the S3 folder containing NetCDF files.
+    endpoint_url : str
+        URL of the S3 endpoint.
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max].
+    engine : str, optional
+        Engine for reading NetCDF files, default is "h5netcdf".
+        
+    Returns
+    -------
+    dict
+        A dictionary of xarray datasets.
+    """
+    lon_min, lat_min, lon_max, lat_max = area
+    
+    # Initialize S3 filesystem
+    fs = s3fs.S3FileSystem(anon=True, endpoint_url=endpoint_url)
+    
+    # List NetCDF files in the folder
+    file_list = [file for file in fs.ls(s3_folder) if file.endswith('.nc')]
+    
+    # Initialize the output dictionary
+    datasets_dict = {}
+    current_key = 0
+    
+    for file in file_list:
+        try:
+            # Open the NetCDF file
+            with fs.open(file, mode='rb') as fileObj:
+                ds = xr.open_dataset(fileObj, engine=engine)
+                
+                #drop some variables
+                ds = ds.drop_vars(["i_num_line", "i_num_pixel"], errors="ignore")
+                    
+                # Check geographical filtering
+                if 'latitude' in ds and 'longitude' in ds:
+
+                    # Handle longitude wrapping
+                    if lon_min < lon_max:
+                        lon_selection = (ds['longitude'] >= lon_min) & (ds['longitude'] <= lon_max)
+                    else:
+                        lon_selection = ((ds['longitude'] >= lon_min) & (ds['longitude'] <= 360)) | (ds['longitude'] <= lon_max)
+                    
+                    lat_selection = (ds['latitude'] >= lat_min) & (ds['latitude'] <= lat_max)
+                    
+                    # Combine the selection masks
+                    selection = lat_selection & lon_selection
+                    
+                    # Check if selection is valid
+                    if selection.any():
+                        print(f"{file[61:68]} included.")
+                    else :    
+                        ds.close()
+                        continue
+                    
+                    # Drop data outside the region
+                    ds = ds.where(selection, drop=True)
+                    
+                    # Check if the filtered dataset has valid data
+                    if ds['latitude'].size == 0 or ds['longitude'].size == 0:
+                        print(f"File {file} excluded: empty dataset after region filtering.")
+                        ds.close()
+                        continue
+                    
+                # Add the dataset to the dictionary if it passed all filters
+                datasets_dict[current_key] = ds
+                current_key += 1
+                
+        except Exception as e:
+            print(f"Error processing file {file[61:68]}: {e}")
+            continue
+    
+    return datasets_dict
+
+
+# =============================================================================
+# read_swot_ncfiles_S3subfolders
+# =============================================================================
+
+def read_swot_ncfiles_S3subfolders(
+    base_s3_folder,
+    cycle_numbers,
+    endpoint_url,
+    area,
+    engine="h5netcdf"
+):
+    """
+    Load NetCDF files from multiple S3 subfolders and store them in a dictionary.
+    
+    Parameters
+    ----------
+    base_s3_folder : str
+        Base path to the S3 folder containing subfolders for each cycle.
+    cycle_numbers : list
+        List of specific cycle numbers (subfolders) to process (e.g., [500, 502, 501]).
+    endpoint_url : str
+        URL of the S3 endpoint.
+    area : list
+        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max].
+    engine : str, optional
+        Engine for reading NetCDF files, default is "h5netcdf".
+        
+    Returns
+    -------
+    dict
+        A dictionary of xarray datasets.
+    """
+    datasets_dict = {}
+    current_key = 0
+
+    for cycle_number in cycle_numbers:
+        s3_folder = f"{base_s3_folder}/cycle_{cycle_number}/"
+        
+        try:
+            # Use the previous function to load datasets from the specific folder
+            datasets_from_cycle = read_swot_ncfiles_S3folder(
+                s3_folder=s3_folder,
+                endpoint_url=endpoint_url,
+                area=area,
+                engine=engine
+            )
+            
+            # Add the datasets from this cycle to the dictionary
+            for ds in datasets_from_cycle.values():
+                datasets_dict[current_key] = ds
+                current_key += 1
+        
+        except Exception as e:
+            print(f"Error processing cycle {cycle_number}: {e}")
+            continue
+    
+    return datasets_dict
+
+# =============================================================================
+# sort_datasets_by_time
+# =============================================================================
+
+def sort_datasets_by_time(datasets_dict):
+    """
+    Sorts a dictionary of xarray datasets by the `time_coverage_begin` attribute.
+    
+    Parameters
+    ----------
+    datasets_dict : dict
+        Dictionary where keys are integers and values are xarray datasets.
+    
+    Returns
+    -------
+    sorted_datasets : dict
+        A new dictionary with datasets sorted by their `time_coverage_begin` attribute.
+    """
+    # Step 1: Extract and convert time_coverage_begin to datetime
+    dataset_times = []
+    for key, dataset in datasets_dict.items():
+        try:
+            # Assume dataset.time_coverage_begin is a string
+            time_str = str(dataset.time_coverage_begin)
+            # Convert to datetime object
+            time_dt = datetime.fromisoformat(time_str.replace("Z", "+00:00"))
+            dataset_times.append((key, time_dt, dataset))
+        except Exception as e:
+            print(f"Skipping dataset {key}: invalid time_coverage_begin format. Error: {e}")
+            continue
+    
+    # Step 2: Sort datasets by their datetime
+    dataset_times_sorted = sorted(dataset_times, key=lambda x: x[1])
+    
+    # Step 3: Reorganize the dictionary with reindexed keys
+    sorted_datasets = {i: item[2] for i, item in enumerate(dataset_times_sorted)}
+    
+    return sorted_datasets
+
+
+# =============================================================================
+# generate_plots
+# =============================================================================
+
+def generate_plots(sorted_datasets, area, output_dir):
+    """
+    Generate and save superposed plots for datasets in a dictionary.
+    
+    Parameters
+    ----------
+    sorted_datasets : dict
+        Dictionary of datasets, where each key corresponds to a dataset.
+    area : list
+        List specifying the boundaries of the region [lon_min, lat_min, lon_max, lat_max].
+    output_dir : str
+        Directory to save the plots.
+        
+    Returns
+    -------
+    None
+    """
+    # Extract boundaries from the area list
+    lon_min, lat_min, lon_max, lat_max = area
+    
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Plot configuration
+    plot_kwargs = dict(
+        x="longitude",
+        y="latitude",
+        cmap="Spectral_r",
+        vmin=-0.3,
+        vmax=0.3,
+    )
+    
+    # Initialize the global figure and axis
+    fig, ax = plt.subplots(1, 1, figsize=(10, 8), subplot_kw=dict(projection=ccrs.PlateCarree()))
+    ax.coastlines()
+    ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    ax.gridlines(draw_labels=True)
+    ax.add_feature(cfeature.LAND, facecolor='grey')
+    
+    # Loop over the datasets
+    for key, dataset in sorted_datasets.items():
+        # Adjust colorbar settings
+        current_plot_kwargs = plot_kwargs.copy()
+        if key == 0:  # Add colorbar only for the first plot
+            current_plot_kwargs["add_colorbar"] = True
+            current_plot_kwargs["cbar_kwargs"] = {"shrink": 0.5}
+        else:  # Disable colorbar for subsequent plots
+            current_plot_kwargs["add_colorbar"] = False
+
+        # Add the current dataset to the plot
+        dataset.ssha.plot.pcolormesh(ax=ax, **current_plot_kwargs)
+        
+        # Set the title
+        ax.set_title(str(dataset.time_coverage_begin))
+        
+        # Save the plot after each overlay
+        output_path = os.path.join(output_dir, f"plot_{key}.png")
+        plt.savefig(output_path, dpi=300)
+
+    print(f"Plots saved in '{output_dir}'.")
+    
+    
+# =============================================================================
+# make_movie_swot
+# =============================================================================
+ 
+def make_movie_swot(image_folder, output_video, fps=3):
+    """
+    Create a video from images.
+
+    Parameters
+    ----------
+    image_folder : str
+        Folder containing the images to be used in the video.
+    output_video : str
+        Name of the output video file.
+    fps : int, optional
+        Frames per second for the video, default is 3.
+
+    Returns
+    -------
+    None
+    """
+    # Get the list of image files, sorted naturally
+    images = [img for img in os.listdir(image_folder) if img.endswith(".png")]
+    images = natsorted(images)  # Natural sorting (e.g., 1, 2, 10 instead of 1, 10, 2)
+
+    # Check if there are images available
+    if not images:
+        print("No images found in the folder.")
+        return
+
+    # Read the first image to determine video dimensions
+    first_image_path = os.path.join(image_folder, images[0])
+    frame = cv2.imread(first_image_path)
+    height, width, layers = frame.shape
+
+    # Initialize the video writer
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # MP4 codec
+    video = cv2.VideoWriter(output_video, fourcc, fps, (width, height))
+
+    # Add each image to the video
+    for image in images:
+        image_path = os.path.join(image_folder, image)
+        frame = cv2.imread(image_path)
+        video.write(frame)
+
+    # Release resources
+    video.release()
+    cv2.destroyAllWindows()
+
+    print(f"Video saved as '{output_video}'")
+    
