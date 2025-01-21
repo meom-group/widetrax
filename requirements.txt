@@ -10,4 +10,4 @@ jaxparrow
 s3fs
 natsort
 pandas
-cv2
+opencv-python
