@@ -1,9 +1,8 @@
-from collections import defaultdict
-from datetime import datetime, timedelta
 import os
 import re
 import sys
-
+from collections import defaultdict
+from datetime import datetime, timedelta
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
@@ -763,6 +762,8 @@ def _remove_duplicates_from_sys_path():
 
 
 def get_matching_cycles(file_path, start_date_str, end_date_str):
+    
+    
     """
     Fetches a CSV file (local or S3) and finds cycle_numbers corresponding to a date range.
     
@@ -808,29 +809,24 @@ def get_matching_cycles(file_path, start_date_str, end_date_str):
 # read_swot_ncfiles_S3folder
 # =============================================================================
 
-def read_swot_ncfiles_S3folder(
-    s3_folder,
-    endpoint_url,
-    area,
-    engine="h5netcdf"
-):
+def read_swot_ncfiles_S3folder(s3_folder, endpoint_url, area, engine="h5netcdf"):
     """
     Load NetCDF files from S3 and filter them based on the region of interest.
     
     Parameters
-    ----------
+    -----------
     s3_folder : str
         Path to the S3 folder containing NetCDF files.
     endpoint_url : str
         URL of the S3 endpoint.
     area : list
-        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max].
+        List with the boundaries of the region of interest [lon_min, lat_min, lon_max, lat_max].
     engine : str, optional
         Engine for reading NetCDF files, default is "h5netcdf".
         
     Returns
-    -------
-    dict
+    --------
+    datasets_dict : Dict
         A dictionary of xarray datasets.
     """
     lon_min, lat_min, lon_max, lat_max = area
@@ -899,18 +895,12 @@ def read_swot_ncfiles_S3folder(
 # read_swot_ncfiles_S3subfolders
 # =============================================================================
 
-def read_swot_ncfiles_S3subfolders(
-    base_s3_folder,
-    cycle_numbers,
-    endpoint_url,
-    area,
-    engine="h5netcdf"
-):
+def read_swot_ncfiles_S3subfolders(base_s3_folder, cycle_numbers, endpoint_url, area, engine="h5netcdf"):
     """
     Load NetCDF files from multiple S3 subfolders and store them in a dictionary.
     
     Parameters
-    ----------
+    -----------
     base_s3_folder : str
         Base path to the S3 folder containing subfolders for each cycle.
     cycle_numbers : list
@@ -918,13 +908,13 @@ def read_swot_ncfiles_S3subfolders(
     endpoint_url : str
         URL of the S3 endpoint.
     area : list
-        List with the boundaries of the region of interest [longitude_min, latitude_min, longitude_max, latitude_max].
+        List with the boundaries of the region of interest [lon_min, lat_min, lon_max, lat_max].
     engine : str, optional
         Engine for reading NetCDF files, default is "h5netcdf".
         
     Returns
     -------
-    dict
+    datasets_dict : Dict
         A dictionary of xarray datasets.
     """
     datasets_dict = {}
@@ -962,7 +952,7 @@ def sort_datasets_by_time(datasets_dict):
     Sorts a dictionary of xarray datasets by the `time_coverage_begin` attribute.
     
     Parameters
-    ----------
+    -----------
     datasets_dict : dict
         Dictionary where keys are integers and values are xarray datasets.
     
@@ -1002,8 +992,8 @@ def generate_plots(sorted_datasets, area, output_dir):
     Generate and save superposed plots for datasets in a dictionary.
     
     Parameters
-    ----------
-    sorted_datasets : dict
+    -----------
+    sorted_datasets : Dict
         Dictionary of datasets, where each key corresponds to a dataset.
     area : list
         List specifying the boundaries of the region [lon_min, lat_min, lon_max, lat_max].
@@ -1068,7 +1058,7 @@ def make_movie_swot(image_folder, output_video, fps=3):
     Create a video from images.
 
     Parameters
-    ----------
+    -----------
     image_folder : str
         Folder containing the images to be used in the video.
     output_video : str

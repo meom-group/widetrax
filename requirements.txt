@@ -7,3 +7,7 @@ xarray
 datetime
 jax
 jaxparrow
+s3fs
+natsorted
+pandas
+cv2
