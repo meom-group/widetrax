@@ -8,6 +8,6 @@ datetime
 jax
 jaxparrow
 s3fs
-natsorted
+natsort
 pandas
 cv2
