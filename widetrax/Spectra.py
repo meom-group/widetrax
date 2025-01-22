@@ -1,7 +1,7 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import numpy as np
 import scipy.signal as signal
-
+import matplotlib.pyplot as plt
 
 # =============================================================================
 # retrieve_segments
@@ -170,7 +170,7 @@ def psd_mean_and_freq(psd_dict, freqs_dict):
 # plot_psd
 # ============================================================================= 
 
-def plot_psd(ax, freqs, psds, unit, psd_labels, title=None):
+def plot_psd(ax, freqs, psds, unit, psd_labels, title=None, savefig=False, filename=None,plot_transparent=False):
     """
     Plots the Power Spectral Density (PSD) on a logarithmic scale.
     
@@ -198,6 +198,12 @@ def plot_psd(ax, freqs, psds, unit, psd_labels, title=None):
         A list of labels or a single label for the PDS array(s).
     title: str, optional
         Title of the plot.
+    savefig: bool 
+        True to save the figure, False otherwise
+    filename: str or None
+        Name of the file to save the figure, default is 'figure.png'
+    plot_transparent: bool
+        True to display the figure with a transparent background, False otherwise
     """
     if isinstance(psds, np.ndarray):
         psds = [psds]
@@ -237,3 +243,13 @@ def plot_psd(ax, freqs, psds, unit, psd_labels, title=None):
     # Set the title if provided
     if title:
         ax.set_title(title, fontsize=15, fontweight="bold", color="black")
+    
+    # Handle saving the figure if savefig is True
+    if savefig:
+        if filename is None:
+            # Use default filename if none is provided
+            filename = "figure.png"
+        if plot_transparent:
+            plt.savefig(filename,dpi=300,transparent=plot_transparent)
+        else:
+            plt.savefig(filename,dpi=300)
